@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
-import http from "http";
+const express = require('express');
+
 
 dotenv.config();
 
@@ -56,13 +57,16 @@ app.webhooks.onError((error) => {
 });
 
 const port = process.env.PORT || 3000;
-const host = "brandonbuildbot-94131d1b6ce7.herokuapp.com";
+// const host = "brandonbuildbot-94131d1b6ce7.herokuapp.com";
 const path = "/api/webhook";
-const localWebhookUrl = `https://${host}:${port}${path}`;
+// const localWebhookUrl = `https://${host}:${port}${path}`;
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
 
-http.createServer(middleware).listen(port, () => {
-  console.log(`Server is listening for events at: ${localWebhookUrl}`);
-  console.log('Press Ctrl + C to quit.')
+const server = express();
+
+server.use(middleware);
+
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
