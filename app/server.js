@@ -68,7 +68,7 @@ app.webhooks.onError((error) => {
 //
 // For local development, your server will listen to port 3000 on `localhost`. When you deploy your app, you will change these values. For more information, see "[Deploy your app](#deploy-your-app)."
 const port = 3000;
-const host = 'localhost';
+const host = '0.0.0.0';
 const path = "/api/webhook";
 const localWebhookUrl = `http://${host}:${port}${path}`;
 
