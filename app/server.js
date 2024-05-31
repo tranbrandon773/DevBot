@@ -20,7 +20,7 @@ const app = new App({
   },
 });
 
-const messageForNewPRs = "Thanks for opening a new PR! Please follow our contributing guidelines to make your PR easier to review.";
+const messageForNewPRs = "Kevin Zvonarek";
 
 async function handlePullRequestOpened({octokit, payload}) {
   console.log(`Received a pull request event for #${payload.pull_request.number}`);
