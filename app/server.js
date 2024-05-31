@@ -20,7 +20,7 @@ const app = new App({
   },
 });
 
-const messageForNewPRs = "Kevin Zvonarek";
+const messageForNewPRs = "Hello World!";
 
 async function handlePullRequestOpened({octokit, payload}) {
   console.log(`Received a pull request event for #${payload.pull_request.number}`);
@@ -61,8 +61,8 @@ const middleware = createNodeMiddleware(app.webhooks, {path});
 const server = express();
 server.use( middleware);
 
-server.get("/", (req, res) => {
-  res.send("Hello World!")
+server.get("/", (res) => {
+  res.send("Homepage for BrandonBuildBot API")
 })
 
 server.listen(port, () => {
