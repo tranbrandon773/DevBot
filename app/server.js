@@ -64,9 +64,9 @@ const middleware = createNodeMiddleware(app.webhooks, {path});
 
 const server = express();
 
-server.use(middleware);
+server.use(path, middleware);
 
-server.get("/", (res) => {
+server.get("/", (req, res) => {
   res.send("Hello World!")
 })
 
