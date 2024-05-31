@@ -70,8 +70,7 @@ app.webhooks.onError((error) => {
 const port = 3000;
 const host = 'https://brandonbuildbot-94131d1b6ce7.herokuapp.com';
 const path = "/api/webhook";
-// const localWebhookUrl = `http://${host}:${port}${path}`;
-const localWebhookUrl = `http://${host}${path}`;
+const localWebhookUrl = `http://${host}:${port}${path}`;
 
 // This sets up a middleware function to handle incoming webhook events.
 //
