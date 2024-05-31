@@ -67,10 +67,10 @@ app.webhooks.onError((error) => {
 // This determines where your server will listen.
 //
 // For local development, your server will listen to port 3000 on `localhost`. When you deploy your app, you will change these values. For more information, see "[Deploy your app](#deploy-your-app)."
-// const port = 3000;
-// const host = '0.0.0.0';
+const port = 3000;
+const host = '0.0.0.0';
 const path = "/api/webhook";
-// const localWebhookUrl = `http://${host}:${port}${path}`;
+const localWebhookUrl = `http://${host}:${port}${path}`;
 
 // This sets up a middleware function to handle incoming webhook events.
 //
@@ -82,7 +82,7 @@ const path = "/api/webhook";
 const middleware = createNodeMiddleware(app.webhooks, {path});
 
 // This creates a Node.js server that listens for incoming HTTP requests (including webhook payloads from GitHub) on the specified port. When the server receives a request, it executes the `middleware` function that you defined earlier. Once the server is running, it logs messages to the console to indicate that it is listening.
-http.createServer(middleware).listen(() => {
-  console.log("Server is listening for events");
-  console.log('Press Ctrl + C to quit.');
+http.createServer(middleware).listen(port, () => {
+  console.log(`Server is listening for events at: ${localWebhookUrl}`);
+  console.log('Press Ctrl + C to quit.')
 });
