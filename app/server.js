@@ -2,8 +2,7 @@ import dotenv from "dotenv";
 import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
-const express = require('express');
-
+import express from 'express';
 
 dotenv.config();
 
