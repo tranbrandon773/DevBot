@@ -67,6 +67,10 @@ const server = express();
 
 server.use(middleware);
 
+app.get("/", (res) => {
+  res.send("Hello World!")
+})
+
 server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
