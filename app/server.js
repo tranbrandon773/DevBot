@@ -2,9 +2,7 @@ import dotenv from "dotenv";
 import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
-const express = require('express'); 
-  
-const server = express(); 
+import http from "http";
 
 dotenv.config();
 
@@ -62,10 +60,6 @@ const PORT = process.env.PORT || 3000
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
 
-server.get("/", () => { 
-  res.send("Hello World!"); 
-}) 
-
-server.post("/api/webhook")
-server.use("/api/webhook", middleware)
-server.listen(PORT, () => console.log(`Listening on port ${ PORT }`))
+http.createServer(middleware).listen(PORT, () => {
+  console.log(`Server started successfully on port ${PORT}`);
+});
