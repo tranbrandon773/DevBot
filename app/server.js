@@ -56,9 +56,10 @@ app.webhooks.onError((error) => {
 });
 
 const path = "/api/webhook";
+const PORT = process.env.PORT || 3000
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
 
-http.createServer(middleware).listen( () => {
-  console.log("Server started successfully.")
+http.createServer(middleware).listen(PORT, () => {
+  console.log(`Server started successfully on port ${PORT}`);
 });
