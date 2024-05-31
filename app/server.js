@@ -59,7 +59,6 @@ const port = process.env.PORT || 3000;
 const path = "/api/webhook";
 const middleware = createNodeMiddleware(app.webhooks, {path});
 const server = express();
-server.use(express.json());
 server.use( middleware);
 
 server.get("/", (req, res) => {
