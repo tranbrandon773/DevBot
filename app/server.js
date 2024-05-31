@@ -55,11 +55,14 @@ app.webhooks.onError((error) => {
   }
 });
 
+const port = process.env.PORT || 3000;
+const host = "brandonbuildbot-94131d1b6ce7.herokuapp.com";
 const path = "/api/webhook";
-const PORT = process.env.PORT || 3000
+const localWebhookUrl = `https://${host}:${port}${path}`;
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
 
-http.createServer(middleware).listen(PORT, () => {
-  console.log(`Server started successfully on port ${PORT}`);
+http.createServer(middleware).listen(port, () => {
+  console.log(`Server is listening for events at: ${localWebhookUrl}`);
+  console.log('Press Ctrl + C to quit.')
 });
