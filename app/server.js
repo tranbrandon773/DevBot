@@ -68,9 +68,10 @@ app.webhooks.onError((error) => {
 //
 // For local development, your server will listen to port 3000 on `localhost`. When you deploy your app, you will change these values. For more information, see "[Deploy your app](#deploy-your-app)."
 const port = 3000;
-const host = '0.0.0.0';
+const host = 'https://brandonbuildbot-94131d1b6ce7.herokuapp.com';
 const path = "/api/webhook";
-const localWebhookUrl = `http://${host}:${port}${path}`;
+// const localWebhookUrl = `http://${host}:${port}${path}`;
+const localWebhookUrl = `http://${host}${path}`;
 
 // This sets up a middleware function to handle incoming webhook events.
 //
