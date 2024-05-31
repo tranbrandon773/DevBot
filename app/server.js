@@ -67,7 +67,7 @@ const server = express();
 
 server.use(middleware);
 
-app.get("/", (res) => {
+server.get("/", (res) => {
   res.send("Hello World!")
 })
 
