@@ -56,14 +56,10 @@ app.webhooks.onError((error) => {
 });
 
 const port = process.env.PORT || 3000;
-// const host = "brandonbuildbot-94131d1b6ce7.herokuapp.com";
 const path = "/api/webhook";
-// const localWebhookUrl = `https://${host}:${port}${path}`;
-
 const middleware = createNodeMiddleware(app.webhooks, {path});
-
 const server = express();
-
+server.use(express.json());
 server.use(path, middleware);
 
 server.get("/", (req, res) => {
