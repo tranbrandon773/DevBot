@@ -34,7 +34,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-    console.log(`Workflow run log can be found at: ${res.Location}`);
+    console.log(`Result: ${res}`);
   } catch (error) {
     if (error.response) {
       console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
