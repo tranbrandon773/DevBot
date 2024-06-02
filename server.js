@@ -29,10 +29,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${payload.workflow_run.id}`);
 
   try {
-    const res = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
-      owner: 'OWNER',
-      repo: 'REPO',
-      run_id: 'RUN_ID',
+    const res = await octokit.request(payload.workflow_run.logs_url, {
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
