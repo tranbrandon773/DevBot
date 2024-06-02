@@ -37,13 +37,13 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
+    console.log(`Workflow run log can be found at: ${res.Location}`);
   } catch (error) {
     if (error.response) {
       console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
     }
     console.error(error)
   }
-  console.log(`Workflow run log can be found at: ${res.Location}`);
 };
 
 // This sets up a webhook event listener. When your app receives a webhook event from GitHub with a `X-GitHub-Event` header value of `pull_request` and an `action` payload value of `opened`, it calls the `handlePullRequestOpened` event handler that is defined above.
