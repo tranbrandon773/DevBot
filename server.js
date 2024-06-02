@@ -34,7 +34,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-    const data = await res.json();
+    const data = JSON.stringify(res);
     console.log(`Result: ${data}`);
   } catch (error) {
     if (error.response) {
