@@ -22,18 +22,20 @@ const app = new App({
 
 const messageForNewPRs = "Hello World!";
 
-async function handlePullRequestOpened({octokit, payload}) {
-  console.log(`Received a pull request event for #${payload.pull_request.number}`);
+async function handleWorkflowRunCompleted({octokit, payload}) {
+
+  if (payload.action !== "completed" || payload.workflow_run.conclusion !== "failure") return
+
+  console.log(`Received a (failed) workflow run event for #${payload.workflow_run.id}`);
 
   try {
-    await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      issue_number: payload.pull_request.number,
-      body: messageForNewPRs,
+    const res = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
+      owner: 'OWNER',
+      repo: 'REPO',
+      run_id: 'RUN_ID',
       headers: {
-        "x-github-api-version": "2022-11-28",
-      },
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
     });
   } catch (error) {
     if (error.response) {
@@ -41,10 +43,11 @@ async function handlePullRequestOpened({octokit, payload}) {
     }
     console.error(error)
   }
+  console.log(`Workflow run log can be found at: ${res.Location}`);
 };
 
 // This sets up a webhook event listener. When your app receives a webhook event from GitHub with a `X-GitHub-Event` header value of `pull_request` and an `action` payload value of `opened`, it calls the `handlePullRequestOpened` event handler that is defined above.
-app.webhooks.on("pull_request.opened", handlePullRequestOpened);
+app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 
 // This logs any errors that occur.
 app.webhooks.onError((error) => {
