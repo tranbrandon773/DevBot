@@ -22,7 +22,7 @@ export async function getFileContent(octokit, owner, repo, path, sha) {
 export async function getWorkflowLogs(octokit, owner, repo, runId) {
     let logsUrl;
     try {
-        await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
+        const res = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
             owner: owner,
             repo: repo,
             run_id: runId,
