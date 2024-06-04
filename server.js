@@ -3,6 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
+import {getWorkflowLogs} from './helper.js';
 
 dotenv.config();
 
@@ -20,33 +21,23 @@ const app = new App({
   },
 });
 
-const messageForNewPRs = "Hello World!";
-
 async function handleWorkflowRunCompleted({octokit, payload}) {
 
-  if (payload.action !== "completed" || payload.workflow_run.conclusion !== "failure") return
+  if (payload.action !== "completed" || 
+  payload.workflow_run.conclusion !== "failure" || 
+  payload.workflow_run.pull_requests.length === 0) return
 
-  console.log(`Received a (failed) workflow run event for #${payload.workflow_run.id}`);
+  const owner =  payload.repository.owner.login
+  const repo =  payload.repository.name
+  const runId = payload.workflow_run.id
+  console.log(`Received a (failed) workflow run event for #${runId}`);
 
-  try {
-    const res = await octokit.request(`GET ${payload.workflow_run.logs_url}`, {
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
-    });
-    console.log(`Log URL: ${res.url}`);
-  } catch (error) {
-    if (error.response) {
-      console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-    }
-    console.error(error)
-  }
+  getWorkflowLogs(octokit, owner, repo, runId);
 };
 
-// This sets up a webhook event listener. When your app receives a webhook event from GitHub with a `X-GitHub-Event` header value of `pull_request` and an `action` payload value of `opened`, it calls the `handlePullRequestOpened` event handler that is defined above.
+// Event listener for GitHub webhooks when workflow runs complete
 app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 
-// This logs any errors that occur.
 app.webhooks.onError((error) => {
   if (error.name === "AggregateError") {
     console.error(`Error processing request: ${error.event}`);
@@ -59,9 +50,9 @@ const port = process.env.PORT || 3000;
 const path = "/api/webhook";
 const middleware = createNodeMiddleware(app.webhooks, {path});
 const server = express();
-server.use( middleware);
+server.use(middleware);
 
-server.get("/", (req, res) => {
+server.get("/", (_, res) => {
   res.send("Homepage for BrandonBuildBot API")
 })
 
