@@ -35,7 +35,7 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
                 'X-GitHub-Api-Version': '2022-11-28'
             }
             });
-        filesChanged = res
+        filesChanged = res.data
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
