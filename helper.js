@@ -15,7 +15,6 @@ export async function getWorkflowLogs(octokit, owner, repo, runId) {
         // logs = await axios.get(logsUrl, {
         //     responseType: 'arraybuffer',  
         // });
-        console.log(`Logs URL: ${logsUrl}`);
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
