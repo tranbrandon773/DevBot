@@ -42,7 +42,7 @@ export async function getFilesChangedFromPullRequest({octokit, payload}) {
         }
         console.error(error);
     }
-    console.log(res)
+    console.log(filesChanged)
 }
  
 export async function getFileContent(octokit, owner, repo, path, sha) {
