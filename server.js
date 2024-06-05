@@ -33,6 +33,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   getWorkflowLogs(octokit, owner, repo, runId);
+  getFilesChangedFromPullRequest(octokit, payload);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
