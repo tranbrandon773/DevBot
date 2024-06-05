@@ -3,7 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs} from './helper.js';
+import {getWorkflowLogs, getFilesChangedFromPullRequest} from './helper.js';
 
 dotenv.config();
 
@@ -32,8 +32,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const runId = payload.workflow_run.id
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
-  getWorkflowLogs(octokit, owner, repo, runId);
-  getFilesChangedFromPullRequest(octokit, payload);
+  await getWorkflowLogs(octokit, owner, repo, runId);
+  await getFilesChangedFromPullRequest({octokit, payload});
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
