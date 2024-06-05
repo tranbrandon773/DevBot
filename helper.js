@@ -24,7 +24,7 @@ export async function getWorkflowLogs(octokit, owner, repo, runId) {
     console.log(`Logs URL: ${logsUrl}`);
 };
 
-export async function getFilesChangedFromPullRequest({octokit, payload}) {
+export async function getFilesChangedFromPullRequest(octokit, payload) {
     let filesChanged;
     try {
         const res = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
