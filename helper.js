@@ -30,7 +30,7 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
         const res = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
             owner: payload.repository.owner.login,
             repo: payload.repository.name,
-            pull_number: payload.pull_requests[0].number,
+            pull_number: payload.workflow_run.pull_requests[0].number,
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
             }
