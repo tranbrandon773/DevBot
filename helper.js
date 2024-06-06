@@ -1,4 +1,5 @@
 import axios from 'axios'
+import fs from 'fs'
 
 export async function getWorkflowLogs(octokit, owner, repo, runId) {
     let logsUrl;
@@ -23,6 +24,26 @@ export async function getWorkflowLogs(octokit, owner, repo, runId) {
     }
     console.log(`Logs URL: ${logsUrl}`);
 };
+
+export function parseWorkflowLog(pathToLog) {  
+    let errors = [];
+    const log = fs.readFileSync(pathToLog, 'utf8');
+    const regex = /.error.*/ig;
+    errors = log.match(regex);
+
+    return errors;
+}
+
+export function findFilesFromErrors(errors) {
+    let files = new Set();
+    const regex = /([a-zA-Z0-9._-]+\.(java|js|cpp|py))/ig;
+    errors.forEach((errorStr) => {
+        const match = errorStr.match(regex);
+        if (match) files.add(match[0]);
+    });
+
+    return files;
+}
 
 export async function getFilesChangedFromPullRequest(octokit, payload) {
     let filesChanged;
@@ -63,3 +84,8 @@ export async function getFileContent(octokit, owner, repo, path, sha) {
         console.error(error);
     }
 }
+
+const errors = parseWorkflowLog('/Users/brandontran/Documents/logs_36/0_build.txt')
+console.log(errors)
+const files = findFilesFromErrors(errors)
+console.log(files)
