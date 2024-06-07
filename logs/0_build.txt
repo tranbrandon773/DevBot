@@ -1,0 +1,168 @@
+﻿2024-06-04T04:07:15.5308841Z Current runner version: '2.316.1'
+2024-06-04T04:07:15.5333008Z ##[group]Operating System
+2024-06-04T04:07:15.5333758Z Ubuntu
+2024-06-04T04:07:15.5334114Z 22.04.4
+2024-06-04T04:07:15.5334459Z LTS
+2024-06-04T04:07:15.5334836Z ##[endgroup]
+2024-06-04T04:07:15.5335237Z ##[group]Runner Image
+2024-06-04T04:07:15.5335693Z Image: ubuntu-22.04
+2024-06-04T04:07:15.5336133Z Version: 20240526.1.0
+2024-06-04T04:07:15.5337151Z Included Software: https://github.com/actions/runner-images/blob/ubuntu22/20240526.1/images/ubuntu/Ubuntu2204-Readme.md
+2024-06-04T04:07:15.5338596Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu22%2F20240526.1
+2024-06-04T04:07:15.5339499Z ##[endgroup]
+2024-06-04T04:07:15.5339923Z ##[group]Runner Image Provisioner
+2024-06-04T04:07:15.5340409Z 2.0.370.1
+2024-06-04T04:07:15.5340794Z ##[endgroup]
+2024-06-04T04:07:15.5341937Z ##[group]GITHUB_TOKEN Permissions
+2024-06-04T04:07:15.5343496Z Contents: read
+2024-06-04T04:07:15.5344085Z Metadata: read
+2024-06-04T04:07:15.5344658Z ##[endgroup]
+2024-06-04T04:07:15.5347965Z Secret source: Actions
+2024-06-04T04:07:15.5348542Z Prepare workflow directory
+2024-06-04T04:07:15.5995753Z Prepare all required actions
+2024-06-04T04:07:15.6162334Z Getting action download info
+2024-06-04T04:07:15.8180209Z Download action repository 'actions/checkout@v4' (SHA:a5ac7e51b41094c92402da3b24376905380afc29)
+2024-06-04T04:07:16.4114359Z Download action repository 'actions/setup-python@v5' (SHA:82c7e631bb3cdc910f68e0081d67478d79c6982d)
+2024-06-04T04:07:16.6336817Z Complete job name: build
+2024-06-04T04:07:16.7271177Z ##[group]Run actions/checkout@v4
+2024-06-04T04:07:16.7272146Z with:
+2024-06-04T04:07:16.7272941Z   repository: tranbrandon773/test
+2024-06-04T04:07:16.7274121Z   token: ***
+2024-06-04T04:07:16.7274895Z   ssh-strict: true
+2024-06-04T04:07:16.7275742Z   ssh-user: git
+2024-06-04T04:07:16.7276530Z   persist-credentials: true
+2024-06-04T04:07:16.7277409Z   clean: true
+2024-06-04T04:07:16.7278291Z   sparse-checkout-cone-mode: true
+2024-06-04T04:07:16.7279282Z   fetch-depth: 1
+2024-06-04T04:07:16.7280011Z   fetch-tags: false
+2024-06-04T04:07:16.7280897Z   show-progress: true
+2024-06-04T04:07:16.7281662Z   lfs: false
+2024-06-04T04:07:16.7282333Z   submodules: false
+2024-06-04T04:07:16.7283129Z   set-safe-directory: true
+2024-06-04T04:07:16.7283916Z ##[endgroup]
+2024-06-04T04:07:17.0092233Z Syncing repository: tranbrandon773/test
+2024-06-04T04:07:17.0095416Z ##[group]Getting Git version info
+2024-06-04T04:07:17.0096716Z Working directory is '/home/runner/work/test/test'
+2024-06-04T04:07:17.0145343Z [command]/usr/bin/git version
+2024-06-04T04:07:17.0183531Z git version 2.45.1
+2024-06-04T04:07:17.0223613Z ##[endgroup]
+2024-06-04T04:07:17.0346780Z Temporarily overriding HOME='/home/runner/work/_temp/bc27ebf9-4eb3-4c65-bcbd-2a38b0e7aba8' before making global git config changes
+2024-06-04T04:07:17.0354155Z Adding repository directory to the temporary git global config as a safe directory
+2024-06-04T04:07:17.0367514Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/test/test
+2024-06-04T04:07:17.0428327Z Deleting the contents of '/home/runner/work/test/test'
+2024-06-04T04:07:17.0480736Z ##[group]Initializing the repository
+2024-06-04T04:07:17.0482377Z [command]/usr/bin/git init /home/runner/work/test/test
+2024-06-04T04:07:17.0571353Z hint: Using 'master' as the name for the initial branch. This default branch name
+2024-06-04T04:07:17.0579456Z hint: is subject to change. To configure the initial branch name to use in all
+2024-06-04T04:07:17.0586518Z hint: of your new repositories, which will suppress this warning, call:
+2024-06-04T04:07:17.0592579Z hint:
+2024-06-04T04:07:17.0598924Z hint: 	git config --global init.defaultBranch <name>
+2024-06-04T04:07:17.0604625Z hint:
+2024-06-04T04:07:17.0610260Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2024-06-04T04:07:17.0616560Z hint: 'development'. The just-created branch can be renamed via this command:
+2024-06-04T04:07:17.0623740Z hint:
+2024-06-04T04:07:17.0625363Z hint: 	git branch -m <name>
+2024-06-04T04:07:17.0629297Z Initialized empty Git repository in /home/runner/work/test/test/.git/
+2024-06-04T04:07:17.0657338Z [command]/usr/bin/git remote add origin https://github.com/tranbrandon773/test
+2024-06-04T04:07:17.0778730Z ##[endgroup]
+2024-06-04T04:07:17.0780094Z ##[group]Disabling automatic garbage collection
+2024-06-04T04:07:17.0781874Z [command]/usr/bin/git config --local gc.auto 0
+2024-06-04T04:07:17.0906028Z ##[endgroup]
+2024-06-04T04:07:17.0959306Z ##[group]Setting up auth
+2024-06-04T04:07:17.0961083Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2024-06-04T04:07:17.1020837Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2024-06-04T04:07:17.1548008Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2024-06-04T04:07:17.1607460Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2024-06-04T04:07:17.1810255Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2024-06-04T04:07:17.1884483Z ##[endgroup]
+2024-06-04T04:07:17.1886221Z ##[group]Fetching the repository
+2024-06-04T04:07:17.1897838Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +bd211c91da5eb72fa83400d7fa38d1162d873e9a:refs/remotes/pull/36/merge
+2024-06-04T04:07:17.5917926Z From https://github.com/tranbrandon773/test
+2024-06-04T04:07:17.5920235Z  * [new ref]         bd211c91da5eb72fa83400d7fa38d1162d873e9a -> pull/36/merge
+2024-06-04T04:07:17.5984686Z ##[endgroup]
+2024-06-04T04:07:17.5986641Z ##[group]Determining the checkout info
+2024-06-04T04:07:17.5988264Z ##[endgroup]
+2024-06-04T04:07:17.6024495Z [command]/usr/bin/git sparse-checkout disable
+2024-06-04T04:07:17.6255637Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2024-06-04T04:07:17.6443011Z ##[group]Checking out the ref
+2024-06-04T04:07:17.6453883Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/36/merge
+2024-06-04T04:07:17.6632732Z Note: switching to 'refs/remotes/pull/36/merge'.
+2024-06-04T04:07:17.6633753Z 
+2024-06-04T04:07:17.6635119Z You are in 'detached HEAD' state. You can look around, make experimental
+2024-06-04T04:07:17.6636941Z changes and commit them, and you can discard any commits you make in this
+2024-06-04T04:07:17.6638847Z state without impacting any branches by switching back to a branch.
+2024-06-04T04:07:17.6640087Z 
+2024-06-04T04:07:17.6641823Z If you want to create a new branch to retain commits you create, you may
+2024-06-04T04:07:17.6723140Z do so (now or later) by using -c with the switch command. Example:
+2024-06-04T04:07:17.6724027Z 
+2024-06-04T04:07:17.6724376Z   git switch -c <new-branch-name>
+2024-06-04T04:07:17.6724875Z 
+2024-06-04T04:07:17.6725095Z Or undo this operation with:
+2024-06-04T04:07:17.6725503Z 
+2024-06-04T04:07:17.6725686Z   git switch -
+2024-06-04T04:07:17.6726063Z 
+2024-06-04T04:07:17.6726619Z Turn off this advice by setting config variable advice.detachedHead to false
+2024-06-04T04:07:17.6727361Z 
+2024-06-04T04:07:17.6728118Z HEAD is now at bd211c9 Merge 71b64c29217e05d9461680a31a5ca99e3fe896f7 into 8225c2deeb78b137b0943c7fdac49759c02cff55
+2024-06-04T04:07:17.6730666Z ##[endgroup]
+2024-06-04T04:07:17.6787384Z [command]/usr/bin/git log -1 --format='%H'
+2024-06-04T04:07:17.6841316Z 'bd211c91da5eb72fa83400d7fa38d1162d873e9a'
+2024-06-04T04:07:17.7425250Z ##[group]Run actions/setup-python@v5
+2024-06-04T04:07:17.7425760Z with:
+2024-06-04T04:07:17.7426219Z   python-version: 3.x
+2024-06-04T04:07:17.7426570Z   check-latest: false
+2024-06-04T04:07:17.7427089Z   token: ***
+2024-06-04T04:07:17.7427547Z   update-environment: true
+2024-06-04T04:07:17.7427916Z   allow-prereleases: false
+2024-06-04T04:07:17.7428585Z ##[endgroup]
+2024-06-04T04:07:17.9293769Z ##[group]Installed versions
+2024-06-04T04:07:17.9379119Z Successfully set up CPython (3.12.3)
+2024-06-04T04:07:17.9380387Z ##[endgroup]
+2024-06-04T04:07:17.9619017Z ##[group]Run python -m pip install --upgrade pip
+2024-06-04T04:07:17.9619651Z [36;1mpython -m pip install --upgrade pip[0m
+2024-06-04T04:07:17.9620221Z [36;1m# pip install -r requirements.txt[0m
+2024-06-04T04:07:17.9706738Z shell: /usr/bin/bash -e {0}
+2024-06-04T04:07:17.9707288Z env:
+2024-06-04T04:07:17.9707754Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:17.9708462Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.3/x64/lib/pkgconfig
+2024-06-04T04:07:17.9709201Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:17.9709849Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:17.9710471Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:17.9711200Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.3/x64/lib
+2024-06-04T04:07:17.9711738Z ##[endgroup]
+2024-06-04T04:07:18.8238944Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.3/x64/lib/python3.12/site-packages (24.0)
+2024-06-04T04:07:19.1984357Z ##[group]Run pip install ruff
+2024-06-04T04:07:19.1984891Z [36;1mpip install ruff[0m
+2024-06-04T04:07:19.1985422Z [36;1mruff --output-format=github .[0m
+2024-06-04T04:07:19.2052897Z shell: /usr/bin/bash -e {0}
+2024-06-04T04:07:19.2053336Z env:
+2024-06-04T04:07:19.2053775Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:19.2054474Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.3/x64/lib/pkgconfig
+2024-06-04T04:07:19.2055110Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:19.2055708Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:19.2056310Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.3/x64
+2024-06-04T04:07:19.2056919Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.3/x64/lib
+2024-06-04T04:07:19.2057476Z ##[endgroup]
+2024-06-04T04:07:20.2857437Z Collecting ruff
+2024-06-04T04:07:20.3341159Z   Downloading ruff-0.4.7-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (24 kB)
+2024-06-04T04:07:20.3499913Z Downloading ruff-0.4.7-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (8.8 MB)
+2024-06-04T04:07:20.4821569Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.8/8.8 MB 68.4 MB/s eta 0:00:00
+2024-06-04T04:07:20.5012702Z Installing collected packages: ruff
+2024-06-04T04:07:20.6432516Z Successfully installed ruff-0.4.7
+2024-06-04T04:07:20.8441606Z warning: `ruff <path>` is deprecated. Use `ruff check <path>` instead.
+2024-06-04T04:07:20.8492591Z error: Failed to parse main.py:3:19: Expected ':', found newline
+2024-06-04T04:07:20.8549132Z ##[error]main.py:3:19: E999 SyntaxError: Expected ':', found newline
+2024-06-04T04:07:20.8559542Z ##[error]Process completed with exit code 1.
+2024-06-04T04:07:20.8663230Z Post job cleanup.
+2024-06-04T04:07:20.9752831Z [command]/usr/bin/git version
+2024-06-04T04:07:20.9817747Z git version 2.45.1
+2024-06-04T04:07:20.9895999Z Temporarily overriding HOME='/home/runner/work/_temp/972091e9-8f97-4a5b-a78d-28daa9103b5b' before making global git config changes
+2024-06-04T04:07:20.9898354Z Adding repository directory to the temporary git global config as a safe directory
+2024-06-04T04:07:20.9905056Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/test/test
+2024-06-04T04:07:20.9971750Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2024-06-04T04:07:21.0011723Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2024-06-04T04:07:21.0383530Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2024-06-04T04:07:21.0391661Z http.https://github.com/.extraheader
+2024-06-04T04:07:21.0413240Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2024-06-04T04:07:21.0468846Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2024-06-04T04:07:21.1471878Z Cleaning up orphan processes
