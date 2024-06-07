@@ -37,8 +37,9 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   // await getWorkflowLogs(octokit, owner, repo, runId);
   console.log(headRef)
   console.log(baseRef)
-  // const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  // const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
+  const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  console.log(JSON.stringify(oldContent))
   // console.log(`Old Code URL: ${oldContent.download_url}`);
   // console.log(`New Code URL: ${newContent.download_url}`);
 };
