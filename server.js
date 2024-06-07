@@ -35,10 +35,12 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   // await getWorkflowLogs(octokit, owner, repo, runId);
-  const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
-  console.log(`Old Code URL: ${oldContent.download_url}`);
-  console.log(`New Code URL: ${newContent.download_url}`);
+  console.log(headRef)
+  console.log(baseRef)
+  // const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
+  // const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  // console.log(`Old Code URL: ${oldContent.download_url}`);
+  // console.log(`New Code URL: ${newContent.download_url}`);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
