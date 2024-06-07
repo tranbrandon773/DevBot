@@ -21,6 +21,7 @@ const app = new App({
   },
 });
 
+// Listens for workflow runs that failed, specifically for PRs
 async function handleWorkflowRunCompleted({octokit, payload}) {
 
   if (payload.action !== "completed" || 
@@ -35,13 +36,10 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   // await getWorkflowLogs(octokit, owner, repo, runId);
-  console.log(headRef)
-  console.log(baseRef)
-  const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
-  console.log(JSON.stringify(oldContent))
-  // console.log(`Old Code URL: ${oldContent.download_url}`);
-  // console.log(`New Code URL: ${newContent.download_url}`);
+  const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
+  const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  console.log(`Old Code: ${oldCode}`);
+  console.log(`New Code: ${newCode}`);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
