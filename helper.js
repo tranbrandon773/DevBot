@@ -36,12 +36,16 @@ export function parseWorkflowLog(pathToLog) {
 
 export function findFilesFromErrors(errors) {
     let files = new Set();
+    let test = {}
     const regex = /([a-zA-Z0-9._-]+\.(java|js|cpp|py))/ig;
     errors.forEach((errorStr) => {
         const match = errorStr.match(regex);
-        if (match) files.add(match[0]);
+        if (match) {
+            files.add(match[0]);
+            test[match[0]] = errorStr
+        }
     });
-
+    console.log(test)
     return files;
 }
 
