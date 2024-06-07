@@ -36,16 +36,21 @@ export function parseWorkflowLog(pathToLog) {
 
 export function findFilesFromErrors(errors) {
     let files = new Set();
-    let test = {}
+    const myMap = new Map();
     const regex = /([a-zA-Z0-9._-]+\.(java|js|cpp|py))/ig;
     errors.forEach((errorStr) => {
         const match = errorStr.match(regex);
         if (match) {
             files.add(match[0]);
-            test[match[0]] = errorStr
+            if (!myMap.has(match[0])) {
+                myMap.set(match[0], []);
+            }
+            myMap.get(match[0]).push(errorStr);
         }
     });
-    console.log(test)
+    for (const [key, value] of myMap) {
+        console.log(key, ":", value);
+    }
     return files;
 }
 
@@ -68,7 +73,7 @@ export async function getFileContent(octokit, owner, repo, path, sha) {
     }
 }
 
-const errors = parseWorkflowLog('/Users/brandontran/Documents/logs_36/0_build.txt')
-console.log(errors)
+const errors = parseWorkflowLog('/Users/pvv/Documents/logs_36/0_build.txt')
+// console.log(errors)
 const files = findFilesFromErrors(errors)
-console.log(files)
+// console.log(files)
