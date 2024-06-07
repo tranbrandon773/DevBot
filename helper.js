@@ -35,23 +35,18 @@ export function parseWorkflowLog(pathToLog) {
 }
 
 export function findFilesFromErrors(errors) {
-    let files = new Set();
     const myMap = new Map();
     const regex = /([a-zA-Z0-9._-]+\.(java|js|cpp|py))/ig;
     errors.forEach((errorStr) => {
         const match = errorStr.match(regex);
         if (match) {
-            files.add(match[0]);
             if (!myMap.has(match[0])) {
                 myMap.set(match[0], []);
             }
             myMap.get(match[0]).push(errorStr);
         }
     });
-    for (const [key, value] of myMap) {
-        console.log(key, ":", value);
-    }
-    return files;
+    return Array.from(myMap).map(([key, value]) => ({File: key, Errors: value }));;
 }
 
 export async function getFileContent(octokit, owner, repo, path, sha) {
