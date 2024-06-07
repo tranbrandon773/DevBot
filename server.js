@@ -3,7 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, getFilesChangedFromPullRequest} from './helper.js';
+import {getWorkflowLogs, getFileContent} from './helper.js';
 
 dotenv.config();
 
@@ -25,14 +25,20 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   if (payload.action !== "completed" || 
   payload.workflow_run.conclusion !== "failure" || 
-  payload.workflow_run.pull_requests.length === 0) return
+  payload.workflow_run.pull_requests.length === 0) return;
 
-  const owner =  payload.repository.owner.login
-  const repo =  payload.repository.name
-  const runId = payload.workflow_run.id
+  const owner =  payload.repository.owner.login;
+  const repo =  payload.repository.name;
+  const runId = payload.workflow_run.id;
+  const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
+  const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
-  await getWorkflowLogs(octokit, owner, repo, runId);
+  // await getWorkflowLogs(octokit, owner, repo, runId);
+  const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
+  const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  console.log(`Old Code URL: ${oldContent.download_url}`);
+  console.log(`New Code URL: ${newContent.download_url}`);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
