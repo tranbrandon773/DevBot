@@ -35,9 +35,10 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
-  // await getWorkflowLogs(octokit, owner, repo, runId);
+  const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
   const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
   const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  console.log(`Log URL: ${logUrl}`)
   console.log(`Old Code: ${oldCode}`);
   console.log(`New Code: ${newCode}`);
 };

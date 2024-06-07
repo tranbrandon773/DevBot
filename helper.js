@@ -30,7 +30,6 @@ export async function getWorkflowLogs(octokit, owner, repo, runId) {
         }
         console.error(error);
     }
-    console.log(`Logs URL: ${logsUrl}`);
     return logsUrl;
 };
 
