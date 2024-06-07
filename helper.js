@@ -89,7 +89,7 @@ export async function getFileContent(octokit, owner, repo, path, ref) {
                 'X-GitHub-Api-Version': '2022-11-28'
             }
             });
-        downloadUrl = res.data.downloadUrl;
+        downloadUrl = res.data.download_url;
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
