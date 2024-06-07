@@ -46,7 +46,7 @@ export function findFilesFromErrors(errors) {
             myMap.get(match[0]).push(errorStr);
         }
     });
-    return Array.from(myMap).map(([key, value]) => ({File: key, Errors: value }));;
+    return Array.from(myMap).map(([key, value]) => ({File: key, Errors: value }));
 }
 
 export async function getFileContent(octokit, owner, repo, path, sha) {
