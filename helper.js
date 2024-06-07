@@ -73,7 +73,7 @@ export async function getFileContent(octokit, owner, repo, path, sha) {
     }
 }
 
-const errors = parseWorkflowLog('/Users/pvv/Documents/logs_36/0_build.txt')
-// console.log(errors)
+const errors = parseWorkflowLog('logs/0_build.txt')
+console.log(errors)
 const files = findFilesFromErrors(errors)
-// console.log(files)
+console.log(files)
