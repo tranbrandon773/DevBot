@@ -37,7 +37,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
   // Kristijan do: run bash and get log, save it to uniqueName/0_build.txt
-  // call 
+  //      something like ./my_bash.sh link unqiueName
+  // call the following
   // const errors = parseWorkflowLog('uniqueName/0_build.txt')
   // console.log(errors) //this gives you all the errors
   // const files = findFilesFromErrors(errors)
