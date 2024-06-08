@@ -1,9 +1,10 @@
-ls
-echo $1
-echo $2
-echo $1
+unique_name=${2//[^[:alnum:]_]/}
+zipname="${unique_name}.zip"
+mkdir "$unique_name"
+cd "$unique_name"
 curl -LO $1
-uniquename = "$2.zip"
-mv signedlogcontent "$uniquename"
-unzip "$uniquename" 
-run.sh
+echo $zipname
+mv signedlogcontent $zipname
+unzip $zipname
+rm $zipname
+cd ..
