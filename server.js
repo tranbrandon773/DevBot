@@ -21,6 +21,7 @@ const app = new App({
   },
 });
 
+// Listens for workflow runs that failed, specifically for PRs
 async function handleWorkflowRunCompleted({octokit, payload}) {
 
   if (payload.action !== "completed" || 
@@ -34,11 +35,21 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
-  // await getWorkflowLogs(octokit, owner, repo, runId);
-  const oldContent = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  const newContent = await getFileContent(octokit, owner, repo, 'main.py', headRef);
-  console.log(`Old Code URL: ${oldContent.download_url}`);
-  console.log(`New Code URL: ${newContent.download_url}`);
+  const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
+  // Kristijan do: run bash and get log, save it to uniqueName/0_build.txt
+  //      something like ./my_bash.sh link unqiueName
+  // call the following
+  // const errors = parseWorkflowLog('uniqueName/0_build.txt')
+  // console.log(errors) //this gives you all the errors
+  // const files = findFilesFromErrors(errors)
+  // console.log(files) //this gives you all the files in question and their errors
+  // files[0].name will give you main.py in our example
+  const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
+  const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  console.log(`Log URL: ${logUrl}`)
+  console.log(`Old Code: ${oldCode}`);
+  console.log(`New Code: ${newCode}`);
+  console.log(log)
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
