@@ -36,7 +36,13 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
-  const log = await fetch(logUrl)
+  // Kristijan do: run bash and get log, save it to uniqueName/0_build.txt
+  // call 
+  // const errors = parseWorkflowLog('uniqueName/0_build.txt')
+  // console.log(errors) //this gives you all the errors
+  // const files = findFilesFromErrors(errors)
+  // console.log(files) //this gives you all the files in question and their errors
+  // files[0].name will give you main.py in our example
   const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
   const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
   console.log(`Log URL: ${logUrl}`)
