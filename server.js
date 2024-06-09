@@ -42,12 +42,14 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const mappedErrors = findFilesFromErrors(errors);
   console.log(mappedErrors);
 
-  runShellPost("temp");
+  for (let i = 0; i < mappedErrors.length; i++) {
+    var oldCode = await getFileContent(octokit, owner, repo, mappedErrors[i].file, baseRef);
+    var newCode = await getFileContent(octokit, owner, repo, mappedErrors[i].file, headRef);
+    console.log(`Old Code: ${oldCode}`);
+    console.log(`New Code: ${newCode}`);
+  }
   
-  // const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  // const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
-  // console.log(`Old Code: ${oldCode}`);
-  // console.log(`New Code: ${newCode}`);
+  runShellPost("temp");
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
