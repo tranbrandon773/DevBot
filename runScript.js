@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Define the shell script to run
-const shellScript = `${__dirname}/mock.sh ${link} ${newName}`; // Adjust path if necessary
+const shellScript = `${__dirname}/mock.sh "${link}" ${newName}`; // Adjust path if necessary
 console.log(shellScript)
 
 // Execute the shell script
