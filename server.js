@@ -42,13 +42,6 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const mappedErrors = findFilesFromErrors(errors);
   console.log(mappedErrors);
 
-  for (let i = 0; i < mappedErrors.length; i++) {
-    var oldCode = await getFileContent(octokit, owner, repo, mappedErrors[i].file, baseRef);
-    var newCode = await getFileContent(octokit, owner, repo, mappedErrors[i].file, headRef);
-    console.log(`Old Code: ${oldCode}`);
-    console.log(`New Code: ${newCode}`);
-  }
-  
   runShellPost("temp");
 };
 
