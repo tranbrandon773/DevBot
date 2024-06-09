@@ -1,8 +1,6 @@
 unique_name=${2//[^[:alnum:]_]/}
 zipname="${unique_name}.zip"
 mkdir "$unique_name"
-curl -LO $1 --output "$unique_name"
-echo "${unique_name}/signedlogcontent*"
+curl $1 -L -o "${unique_name}/${zipname}"
 echo "${unique_name}/${zipname}"
-mv "${unique_name}/signedlogcontent*" "${unique_name}/${zipname}"
 unzip "${unique_name}/${zipname}"
