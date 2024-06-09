@@ -4,8 +4,6 @@ import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
 import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors} from './helper.js';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import {runShell} from './runScript.js';
 
 dotenv.config();
@@ -39,14 +37,10 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
-  runShell(logUrl, "temp");
-  setTimeout(() => {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
-    const errors = parseWorkflowLog(`${__dirname}/temp/0_build.txt`);
-    const mappedErrors = findFilesFromErrors(errors);
-    console.log(mappedErrors);
-  }, 1000);
+  await runShell(logUrl, "temp");
+  const errors = parseWorkflowLog(`./temp/0_build.txt`);
+  const mappedErrors = findFilesFromErrors(errors);
+  console.log(mappedErrors);
   
   // const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
   // const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
