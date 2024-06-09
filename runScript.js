@@ -1,8 +1,8 @@
-import { exec } from 'child_process';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-export async function runShell(link, newName)
+export function runShell(link, newName)
 {
     // Convert to ES module path resolution
     const __filename = fileURLToPath(import.meta.url);
@@ -12,7 +12,7 @@ export async function runShell(link, newName)
     const shellScript = `${__dirname}/mock.sh "${link}" ${newName}`; // Adjust path if necessary
 
     // Execute the shell script
-    exec(shellScript, (error, stdout, stderr) => {
+    execSync(shellScript, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);
             return;

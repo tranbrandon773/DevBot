@@ -37,7 +37,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
-  await runShell(logUrl, "temp");
+  runShell(logUrl, "temp");
   const errors = parseWorkflowLog(`./temp/0_build.txt`);
   const mappedErrors = findFilesFromErrors(errors);
   console.log(mappedErrors);
