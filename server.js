@@ -41,7 +41,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   
   runShell(logUrl, "temp");
 
-  const errors = parseWorkflowLog("app/temp/0_build.txt");
+  const errors = parseWorkflowLog("/app/temp/0_build.txt");
   
   const mappedErrors = findFilesFromErrors(errors);
   console.log(mappedErrors);
