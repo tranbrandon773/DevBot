@@ -4,7 +4,7 @@ mkdir "$unique_name"
 cd "$unique_name"
 curl -LO $1
 echo $zipname
-mv signedlogcontent $zipname
+mv signedlogcontent* $zipname
 unzip $zipname
 rm $zipname
 cd ..
