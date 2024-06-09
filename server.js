@@ -5,7 +5,7 @@ import fs from "fs";
 import express from 'express';
 import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors} from './helper.js';
 import { dirname } from 'path';
-
+import { fileURLToPath } from 'url';
 import {runShell} from './runScript.js';
 
 dotenv.config();
@@ -41,6 +41,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
   
   runShell(logUrl, "temp");
+  const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const errors = parseWorkflowLog(`${__dirname}/temp/0_build.txt`);
   
