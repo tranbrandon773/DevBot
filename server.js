@@ -3,7 +3,9 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, getFileContent} from './helper.js';
+import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors} from './helper.js';
+
+import {runShell} from './runScript.js';
 
 dotenv.config();
 
@@ -36,17 +38,14 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
-  //1. run shell script, get path to log (specifically file is named 0_build.txt)
-  //2. parsing log for errors
-  //3. map errors to files
-  // Kristijan do: run bash and get log, save it to uniqueName/0_build.txt
-  //      something like ./my_bash.sh link unqiueName
-  // call the following
-  // const errors = parseWorkflowLog('uniqueName/0_build.txt')
-  // console.log(errors) //this gives you all the errors
-  // const files = findFilesFromErrors(errors)
-  // console.log(files) //this gives you all the files in question and their errors
-  // files[0].name will give you main.py in our example
+  
+  // runShell("https://github.com/gw31415/math2img/archive/refs/tags/v0.1.9.zip", "dummy");
+  // const errors = parseWorkflowLog(logUrl);
+  // console.log(errors);
+  // const mappedErrors = findFilesFromErrors(errors);
+  // console.log(mappedErrors)
+  // mappedErrors[0].name
+
   const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
   const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
   console.log(`Log URL: ${logUrl}`)
