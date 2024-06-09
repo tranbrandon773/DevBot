@@ -39,19 +39,15 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   console.log(`Received a (failed) workflow run event for #${runId}`);
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
-  console.log("Shell run")
-  // runShell(logUrl, "temp");
+  runShell(logUrl, "temp");
   setTimeout(() => {
-    // runs after 5 seconds
-  }, 5000);
-  console.log("Shell end")
-  // const __filename = fileURLToPath(import.meta.url);
-  // const __dirname = dirname(__filename);
-  // const errors = parseWorkflowLog(`${__dirname}/temp/0_build.txt`);
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const errors = parseWorkflowLog(`${__dirname}/temp/0_build.txt`);
+    const mappedErrors = findFilesFromErrors(errors);
+    console.log(mappedErrors);
+  }, 1000);
   
-  // const mappedErrors = findFilesFromErrors(errors);
-  // console.log(mappedErrors);
-
   // const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
   // const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
   // console.log(`Old Code: ${oldCode}`);
