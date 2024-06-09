@@ -10,7 +10,6 @@ const __dirname = dirname(__filename);
 
 // Define the shell script to run
 const shellScript = `${__dirname}/mock.sh "${link}" ${newName}`; // Adjust path if necessary
-console.log(shellScript)
 
 // Execute the shell script
 exec(shellScript, (error, stdout, stderr) => {
@@ -23,8 +22,7 @@ exec(shellScript, (error, stdout, stderr) => {
         console.error(`Script stderr: ${stderr}`);
         return;
     }
-
-    console.log(`Script output: ${stdout}`);
+    // console.log(`Script output: ${stdout}`);
 });}
 
 export {runShell};
