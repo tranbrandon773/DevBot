@@ -41,6 +41,9 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
   
   runShell(logUrl, "temp");
+  setTimeout(() => {
+    // runs after 50 milliseconds
+  }, 1000);
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const errors = parseWorkflowLog(`${__dirname}/temp/0_build.txt`);
