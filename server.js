@@ -39,19 +39,17 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
   
-  // runShell("https://github.com/gw31415/math2img/archive/refs/tags/v0.1.9.zip", "dummy");
-  // const errors = parseWorkflowLog(logUrl);
-  // console.log(errors);
-  // const mappedErrors = findFilesFromErrors(errors);
-  // console.log(mappedErrors)
-  // mappedErrors[0].name
+  runShell(logUrl, "temp");
 
-  const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
-  console.log(`Log URL: ${logUrl}`)
-  console.log(`Old Code: ${oldCode}`);
-  console.log(`New Code: ${newCode}`);
-  console.log(log)
+  const errors = parseWorkflowLog("./temp/0_build.txt");
+  
+  const mappedErrors = findFilesFromErrors(errors);
+  console.log(mappedErrors);
+
+  // const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
+  // const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
+  // console.log(`Old Code: ${oldCode}`);
+  // console.log(`New Code: ${newCode}`);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
