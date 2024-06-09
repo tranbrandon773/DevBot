@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 unique_name=${2//[^[:alnum:]_]/}
 zipname="${unique_name}.zip"
