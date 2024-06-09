@@ -4,6 +4,5 @@ mkdir "$unique_name"
 curl -LO $1 --output "$unique_name"
 echo "${unique_name}/signedlogcontent*"
 echo "${unique_name}/${zipname}"
-# mv "${unique_name}/signedlogcontent*" "${unique_name}/${zipname}"
-# unzip $zipname
-# rm $zipname
+mv "${unique_name}/signedlogcontent*" "${unique_name}/${zipname}"
+unzip "${unique_name}/${zipname}"
