@@ -8,13 +8,13 @@ import fs from 'fs'
     @param runId: String denoting ID of the given workflow run
     @returns The download URL for the workflow run log
 */
-export async function getWorkflowLogs(octokit, owner, repo, runId) {
+export async function getWorkflowLogs(octokit, payload) {
     let logsUrl;
     try {
         const res = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
-            owner: owner,
-            repo: repo,
-            run_id: runId,
+            owner: payload.repository.owner.login,
+            repo: payload.repository.name,
+            run_id: payload.workflow_run.id,
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
             }
@@ -76,12 +76,12 @@ export function findFilesFromErrors(errors) {
     @returns The download URL for the file content
 
 */
-export async function getFileContent(octokit, owner, repo, path, ref) {
+export async function getFileContent(octokit, payload, path, ref) {
     let downloadUrl;
     try {
         const res = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}?ref={ref}', {
-            owner: owner,
-            repo: repo,
+            owner: payload.repository.owner.login,
+            repo: payload.repository.name,
             path: path,
             ref: ref,
             headers: {
