@@ -3,8 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors} from './helper.js';
-import {runShell, runShellPost} from './runScript.js';
+import {getWorkflowLogs, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost, fetchOldAndNewCode} from './helper.js';
 
 dotenv.config();
 
@@ -29,20 +28,13 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   payload.workflow_run.conclusion !== "failure" || 
   payload.workflow_run.pull_requests.length === 0) return;
 
-  const owner =  payload.repository.owner.login;
-  const repo =  payload.repository.name;
-  const runId = payload.workflow_run.id;
-  const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
-  const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
-  console.log(`Received a (failed) workflow run event for #${runId}`);
-
-  const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
+  const logUrl = await getWorkflowLogs(octokit, payload);
   runShell(logUrl, "temp");
   const errors = parseWorkflowLog(`./temp/0_build.txt`);
   const mappedErrors = findFilesFromErrors(errors);
-  console.log(mappedErrors);
-
   runShellPost("temp");
+  await fetchOldAndNewCode(octokit, payload, mappedErrors);
+  console.log(mappedErrors);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
