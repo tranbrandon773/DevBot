@@ -1,4 +1,5 @@
-import fs from 'fs'
+import fs from 'fs';
+import { execSync } from 'child_process';
 
 /*
     Fetches the workflow log for a specific workflow run
@@ -20,9 +21,6 @@ export async function getWorkflowLogs(octokit, payload) {
             }
             });
         logsUrl = res.url;
-        // logs = await axios.get(logsUrl, {
-        //     responseType: 'arraybuffer',  
-        // });
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -31,6 +29,36 @@ export async function getWorkflowLogs(octokit, payload) {
     }
     return logsUrl;
 };
+
+export function runShell(link, newName) {
+    const shellScript = `./scripts/fetchLog.sh "${link}" ${newName}`;
+    execSync(shellScript, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing script: ${error.message}`);
+            return;
+        }
+
+        if (stderr) {
+            console.error(`Script stderr: ${stderr}`);
+            return;
+        }
+    });
+}
+
+export function runShellPost(newName) {
+    const shellScript = `./scripts/postrun.sh ${newName}`;
+    execSync(shellScript, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing script: ${error.message}`);
+            return;
+        }
+
+        if (stderr) {
+            console.error(`Script stderr: ${stderr}`);
+            return;
+        }
+    });
+}
 
 /*
     Parses a workflow log (.txt) and finds all errors

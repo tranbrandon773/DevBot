@@ -3,8 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors} from './helper.js';
-import {runShell, runShellPost} from './runScript.js';
+import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost} from './helper.js';
 
 dotenv.config();
 
@@ -44,6 +43,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
     file.oldCode = oldCode;
     file.newCode = newCode;
   });
+
+  console.log(mappedErrors)
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
