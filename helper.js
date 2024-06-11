@@ -116,8 +116,7 @@ export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
     /*
     Fetches the file content for a given repository and branch
     @param octokit: App that abstracts GitHub API requests
-    @param owner: String denoting owner of the repository
-    @param repo: String denoting repository name
+    @param payload: The response object from GitHub webhook events
     @param path: String denoting path to the file from the repository
     @param ref: String denoting the branch to retrieve the file content from
     @returns The content of the specified file
@@ -173,7 +172,7 @@ export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
     for (const file of mappedErrors) {
       const oldCode = await getFileContent(octokit, payload, file.file_name, baseRef);
       const newCode = await getFileContent(octokit, payload, file.file_name, headRef);
-      file.oldCode = oldCode;
-      file.newCode = newCode;
+      file.old_code = oldCode;
+      file.new_code = newCode;
     };
 }
