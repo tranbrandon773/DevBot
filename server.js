@@ -3,7 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, getFileContent, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost} from './helper.js';
+import {getWorkflowLogs, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost, fetchOldAndNewCode} from './helper.js';
 
 dotenv.config();
 
@@ -32,18 +32,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   runShell(logUrl, "temp");
   const errors = parseWorkflowLog(`./temp/0_build.txt`);
   const mappedErrors = findFilesFromErrors(errors);
-
   runShellPost("temp");
-
-  mappedErrors.forEach(async (file) => {
-    const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
-    const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
-    const oldCode = await getFileContent(octokit, payload, file.file_name, baseRef);
-    const newCode = await getFileContent(octokit, payload, file.file_name, headRef);
-    file.oldCode = oldCode;
-    file.newCode = newCode;
-  });
-
+  await fetchOldAndNewCode(octokit, payload, mappedErrors);
   console.log(mappedErrors);
 };
 
