@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
+import axios from 'axios';
 
 /*
     Fetches the workflow log for a specific workflow run
@@ -91,7 +92,7 @@ export function findFilesFromErrors(errors) {
             myMap.get(match[0]).push(errorStr);
         }
     });
-    return Array.from(myMap).map(([key, value]) => ({File: key, Errors: value }));
+    return Array.from(myMap).map(([key, value]) => ({file_name: key, errors: value }));
 }
 
 /*
@@ -101,11 +102,22 @@ export function findFilesFromErrors(errors) {
     @param repo: String denoting repository name
     @param path: String denoting path to the file from the repository
     @param ref: String denoting the branch to retrieve the file content from
-    @returns The download URL for the file content
+    @returns The content of the specified file
 
 */
 export async function getFileContent(octokit, payload, path, ref) {
     let downloadUrl;
+    // Helper function to retrieve content using axios
+    const fetchContent = async (url) => {
+        try {
+            const response = await axios.get(url);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to fetch content from ${url}. Error: ${error.message}`);
+            throw error;
+        }
+    };
+
     try {
         const res = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}?ref={ref}', {
             owner: payload.repository.owner.login,
@@ -115,13 +127,25 @@ export async function getFileContent(octokit, payload, path, ref) {
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
             }
-            });
+        });
         downloadUrl = res.data.download_url;
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
         }
         console.error(error);
+        return null;
     }
-    return downloadUrl
+    
+    if (downloadUrl) {
+        try {
+            const content = await fetchContent(downloadUrl);
+            return content;
+        } catch (error) {
+            console.error('Error fetching file content:', error);
+            return null;
+        }
+    } else {
+        return null;
+    }
 }

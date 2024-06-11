@@ -35,11 +35,11 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   runShellPost("temp");
 
-  mappedErrors.forEach(file => {
+  mappedErrors.forEach((file) => {
     const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
     const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
-    const oldCode = getFileContent(octokit, payload, file, baseRef);
-    const newCode = getFileContent(octokit, payload, file, headRef);
+    const oldCode = getFileContent(octokit, payload, file.file_name, baseRef);
+    const newCode = getFileContent(octokit, payload, file.file_name, headRef);
     file.oldCode = oldCode;
     file.newCode = newCode;
   });
