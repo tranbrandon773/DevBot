@@ -35,16 +35,16 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   runShellPost("temp");
 
-  mappedErrors.forEach((file) => {
+  mappedErrors.forEach(async (file) => {
     const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
     const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
-    const oldCode = getFileContent(octokit, payload, file.file_name, baseRef);
-    const newCode = getFileContent(octokit, payload, file.file_name, headRef);
+    const oldCode = await getFileContent(octokit, payload, file.file_name, baseRef);
+    const newCode = await getFileContent(octokit, payload, file.file_name, headRef);
     file.oldCode = oldCode;
     file.newCode = newCode;
   });
 
-  console.log(mappedErrors)
+  console.log(mappedErrors);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
