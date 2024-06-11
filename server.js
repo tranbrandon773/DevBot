@@ -29,22 +29,16 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   payload.workflow_run.conclusion !== "failure" || 
   payload.workflow_run.pull_requests.length === 0) return;
 
-  // const owner = payload.repository.owner.login;
-  // const repo = payload.repository.name;
-  // const runId = payload.workflow_run.id;
-  const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
-  const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
-  console.log(`Received a (failed) workflow run event for #${runId}`);
-
   const logUrl = await getWorkflowLogs(octokit, payload);
   runShell(logUrl, "temp");
   const errors = parseWorkflowLog(`./temp/0_build.txt`);
   const mappedErrors = findFilesFromErrors(errors);
-  console.log(mappedErrors);
 
   runShellPost("temp");
 
   mappedErrors.forEach(file => {
+    const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
+    const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
     const oldCode = getFileContent(octokit, payload, file, baseRef);
     const newCode = getFileContent(octokit, payload, file, headRef);
     file.oldCode = oldCode;
