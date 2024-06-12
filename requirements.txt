@@ -1,5 +1,6 @@
 dotenv
 octokit
 express
+openai
 child_process
 axios
