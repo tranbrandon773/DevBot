@@ -2,22 +2,25 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const key = process.env.OPENAI_API_KEY
-
-const openai = new OpenAI({
-    apiKey: key
-});
-
-async function main() {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "system", content: "Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are given the old and new code of a given file along with the errors that occurred in the new code. Please fix the errors. Only output the code."},
-                {role: "user", content: "Old Code: ```print('Hello World!')``` New Code: ```import numpy as np \n print('Hello World!')``` Errors: [main.py:1:17: F401 `numpy` imported but unused]"}
-    ],
-    model: "gpt-4o",
+/*
+  Calls OpenAI API for each file to generate the code fix given old code, new code, and errors
+  @param mappedErrors: An array of Maps with properties file_name, errors, old_code, new_code
+  @returns An object with key file_name and value fixed code
+*/
+export async function generateFixesForErrors(mappedErrors) {
+  const key = process.env.OPENAI_API_KEY;
+  const openai = new OpenAI({
+      apiKey: key
   });
-
-  console.log(completion.choices[0]);
+  let res = {};
+  for (const file of mappedErrors) {
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "system", content: "Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are given the old and new code of a file along with the errors that occurred in the new code. Please fix the errors. Only output the code."},
+                  {role: "user", content: `Old Code: ${file.old_code} New Code: ${file.new_code} Errors: ${file.errors}`}
+      ],
+      model: "gpt-4o",
+    });
+    res.file.name = completion.choices[0].message.content;
+  };
+  return res;
 }
-
-main();
