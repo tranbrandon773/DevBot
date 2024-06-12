@@ -3,7 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, getFileContent} from './helper.js';
+import {getWorkflowLogs, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost, fetchOldAndNewCode} from './helper.js';
 
 dotenv.config();
 
@@ -28,28 +28,13 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   payload.workflow_run.conclusion !== "failure" || 
   payload.workflow_run.pull_requests.length === 0) return;
 
-  const owner =  payload.repository.owner.login;
-  const repo =  payload.repository.name;
-  const runId = payload.workflow_run.id;
-  const headRef = payload.workflow_run.pull_requests[0].head.ref; //PR branch
-  const baseRef = payload.workflow_run.pull_requests[0].base.ref; //main branch
-  console.log(`Received a (failed) workflow run event for #${runId}`);
-
-  const logUrl = await getWorkflowLogs(octokit, owner, repo, runId);
-  // Kristijan do: run bash and get log, save it to uniqueName/0_build.txt
-  //      something like ./my_bash.sh link unqiueName
-  // call the following
-  // const errors = parseWorkflowLog('uniqueName/0_build.txt')
-  // console.log(errors) //this gives you all the errors
-  // const files = findFilesFromErrors(errors)
-  // console.log(files) //this gives you all the files in question and their errors
-  // files[0].name will give you main.py in our example
-  const oldCode = await getFileContent(octokit, owner, repo, 'main.py', baseRef);
-  const newCode = await getFileContent(octokit, owner, repo, 'main.py', headRef);
-  console.log(`Log URL: ${logUrl}`)
-  console.log(`Old Code: ${oldCode}`);
-  console.log(`New Code: ${newCode}`);
-  console.log(log)
+  const logUrl = await getWorkflowLogs(octokit, payload);
+  runShell(logUrl, "temp");
+  const errors = parseWorkflowLog(`./temp/0_build.txt`);
+  const mappedErrors = findFilesFromErrors(errors);
+  runShellPost("temp");
+  await fetchOldAndNewCode(octokit, payload, mappedErrors);
+  console.log(mappedErrors);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
