@@ -27,7 +27,7 @@ export async function getWorkflowLogs(octokit, payload) {
         console.error(error);
     }
     return logsUrl;
-};
+}
 
 /*
     Runs a shell script to download the workflow logs to the VM
