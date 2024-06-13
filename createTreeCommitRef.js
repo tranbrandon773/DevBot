@@ -72,16 +72,15 @@ export async function createCommitForNewTree(octokit, payload, commitMsg, parent
     Updates the reference branch to point to the new commit
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
-    @param headRef: The reference to the branch trying to be changed
     @param newCommitSha: The sha of the newly created commit
     @returns Void
 */
-export async function updateRefToPointToNewCommit (octokit, payload, headRef, newCommitSha) {
+export async function updateRefToPointToNewCommit(octokit, payload, newCommitSha) {
     try {
         await octokit.request('PATCH /repos/{owner}/{repo}/git/refs/{ref}', {
             owner: payload.repository.owner.login,
             repo: payload.repository.name,
-            ref: headRef,
+            ref: payload.workflow_run.pull_requests[0].head.ref,
             sha: newCommitSha,
             force: true,
             headers: {

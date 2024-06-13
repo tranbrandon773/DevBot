@@ -4,6 +4,8 @@ import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
 import {getWorkflowLogs, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost, fetchOldAndNewCode} from './helper.js';
+import {generateFixesForErrors} from "./openai.js";
+import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 
 dotenv.config();
 
@@ -34,7 +36,11 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const mappedErrors = findFilesFromErrors(errors);
   runShellPost("temp");
   await fetchOldAndNewCode(octokit, payload, mappedErrors);
-  console.log(mappedErrors);
+  await generateFixesForErrors(mappedErrors);
+  const newTreeSha = await createTreeForFixes(octokit, payload, mappedErrors);
+  const newCommitSha = await createCommitForNewTree(octokit, payload, "BuildBot autofix", newTreeSha) //add parent commit sha
+  await updateRefToPointToNewCommit(octokit, payload, newCommitSha)
+
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
