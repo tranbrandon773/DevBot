@@ -105,13 +105,13 @@ export function findFilesFromErrors(errors) {
 }
 
 /*
-    Fetches old and new code for every file in mappedErrors and modifies it in place by adding them as properties
+    Fetches new code for every file in mappedErrors and modifies it in place by adding them as properties
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
     @param mappedErrors: An array of Maps with properties file_name and errors
     @returns Void
 */
-export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
+export async function fetchNewCode(octokit, payload, mappedErrors) {
 
     /*
     Fetches the file content for a given repository and branch
@@ -167,12 +167,9 @@ export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
     }
 
     const headRef = payload.workflow_run.pull_requests[0].head.ref; // PR branch
-    const baseRef = payload.workflow_run.pull_requests[0].base.ref; // main branch
   
     for (const file of mappedErrors) {
-      const oldCode = await getFileContent(octokit, payload, file.file_name, baseRef);
       const newCode = await getFileContent(octokit, payload, file.file_name, headRef);
-      file.old_code = oldCode;
       file.new_code = newCode;
     };
 }

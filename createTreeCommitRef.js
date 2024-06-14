@@ -2,7 +2,7 @@
     Creates a new tree to apply code fixes to
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
-    @param mappedErrors: An array of Maps with properties file_name, errors, old_code, new_code, code_fix
+    @param mappedErrors: An array of Maps with properties file_name, errors, new_code, code_fix
     @returns The sha for the new tree
 */
 export async function createTreeForFixes(octokit, payload, mappedErrors) {
