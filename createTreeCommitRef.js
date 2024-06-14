@@ -64,7 +64,7 @@ export async function createCommitForNewTree(octokit, payload, commitMsg, newTre
         }
         return latestCommitSha;
     }
-    const parentCommitSha = fetchLatestCommitSha(octokit, payload); //newly created commit needs to have previous commit as parent
+    const parentCommitSha = await fetchLatestCommitSha(octokit, payload); //newly created commit needs to have previous commit as parent
     let newCommitSha;
     try {
         const res = await octokit.request('POST /repos/{owner}/{repo}/git/commits', {
