@@ -38,9 +38,9 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   await fetchNewCode(octokit, payload, mappedErrors);
   await generateFixesForErrors(mappedErrors);
   const newTreeSha = await createTreeForFixes(octokit, payload, mappedErrors);
-  const newCommitSha = await createCommitForNewTree(octokit, payload, "BuildBot autofix", newTreeSha) //add parent commit sha
-  await updateRefToPointToNewCommit(octokit, payload, newCommitSha)
-
+  const newCommitSha = await createCommitForNewTree(octokit, payload, "BuildBot autofix", newTreeSha);
+  await updateRefToPointToNewCommit(octokit, payload, newCommitSha);
+  console.log("Successfully autofixed changes.");
 };
 
 // Event listener for GitHub webhooks when workflow runs complete

@@ -39,11 +39,32 @@ export async function createTreeForFixes(octokit, payload, mappedErrors) {
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
     @param commitMsg: Message for the new commit
-    @param parentCommitSha: The previous commit sha of the PR branch
     @param newTreeSha: The sha of the newly created tree
     @returns The sha for the new commit
 */
-export async function createCommitForNewTree(octokit, payload, commitMsg, parentCommitSha, newTreeSha) {
+export async function createCommitForNewTree(octokit, payload, commitMsg, newTreeSha) {
+
+    const fetchLatestCommitSha = async (octokit, payload) => {
+        let latestCommitSha;
+        try {
+            const res = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+                owner: payload.repository.owner.login,
+                repo: payload.repository.name,
+                ref: `heads/${payload.workflow_run.pull_requests[0].head.ref}`,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28'
+                }
+              });
+              latestCommitSha = res.sha;
+        } catch (error) {
+            if (error.response) { 
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
+            }
+            console.error(error);
+        }
+        return latestCommitSha;
+    }
+    const parentCommitSha = fetchLatestCommitSha(octokit, payload); //newly created commit needs to have previous commit as parent
     let newCommitSha;
     try {
         const res = await octokit.request('POST /repos/{owner}/{repo}/git/commits', {
