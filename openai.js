@@ -16,7 +16,7 @@ export async function generateFixesForErrors(mappedErrors) {
   try {
     for (const file of mappedErrors) {
       const completion = await openai.chat.completions.create({
-        messages: [{ role: "system", content: "Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are given the new code of a file along with the errors that occurred in the new code. Please fix the errors. Only output the code."},
+        messages: [{ role: "system", content: "Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are given the code of a file along with the errors that occurred in the code. Please fix the errors and only output the code."},
                     {role: "user", content: `Code: ${file.new_code} Errors: ${file.errors}`}
         ],
         model: "gpt-4o",

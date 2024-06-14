@@ -12,14 +12,14 @@ export async function createTreeForFixes(octokit, payload, mappedErrors) {
             owner: payload.repository.owner.login,
             repo: payload.repository.name,
             base_tree: payload.workflow_run.pull_requests[0].head.sha,
-            tree: mappedErrors.map((file) => {
-                return {
+            tree: mappedErrors.map((file) => (
+                {
                     path: file.file_name,
                     mode: '100644',
                     type: 'blob',
                     content: file.code_fix,
                 }
-            }),
+            )),
             headers: {
               'X-GitHub-Api-Version': '2022-11-28'
             }
