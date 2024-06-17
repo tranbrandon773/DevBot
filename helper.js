@@ -172,7 +172,7 @@ export async function fetchCodeForFiles(octokit, payload, mappedErrors) {
     for (const error of mappedErrors) {
         const path = error.file_path;
         const content = await getFileContent(octokit, payload, path, headRef);
-        res.path = content;
+        res[path] = content;
     }
     return res;
 }
