@@ -36,7 +36,7 @@ export async function getWorkflowLogs(octokit, payload) {
     @returns Void
 */
 export function runShell(link, dirName) {
-    const shellScript = `./scripts/fetchLog.sh "${link}" ${newName}`;
+    const shellScript = `./scripts/fetchLog.sh "${link}" ${dirName}`;
     execSync(shellScript, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);
@@ -56,7 +56,7 @@ export function runShell(link, dirName) {
     @returns Void
 */
 export function runShellPost(dirName) {
-    const shellScript = `./scripts/postrun.sh ${newName}`;
+    const shellScript = `./scripts/postrun.sh ${dirName}`;
     execSync(shellScript, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);

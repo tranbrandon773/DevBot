@@ -3,7 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLog, mapErrorsToFiles, fetchCodeForFiles} from './helper.js';
+import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFiles} from './helper.js';
 import {generateFixesForErrors} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 
@@ -32,7 +32,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   const logUrl = await getWorkflowLogs(octokit, payload);
   runShell(logUrl, "temp");
-  const errors = parseWorkflowLog(`./temp/0_build.txt`);
+  const errors = parseWorkflowLogForErrors(`./temp/0_build.txt`);
   const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
