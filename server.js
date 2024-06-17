@@ -3,7 +3,7 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost, fetchNewCode} from './helper.js';
+import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLog, mapErrorsToFiles, fetchCodeForFiles} from './helper.js';
 import {generateFixesForErrors} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 
@@ -33,14 +33,10 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const logUrl = await getWorkflowLogs(octokit, payload);
   runShell(logUrl, "temp");
   const errors = parseWorkflowLog(`./temp/0_build.txt`);
-  const mappedErrors = findFilesFromErrors(errors);
+  const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
-  await fetchNewCode(octokit, payload, mappedErrors);
-  await generateFixesForErrors(mappedErrors);
-  const newTreeSha = await createTreeForFixes(octokit, payload, mappedErrors);
-  const newCommitSha = await createCommitForNewTree(octokit, payload, "BuildBot autofix", newTreeSha);
-  await updateRefToPointToNewCommit(octokit, payload, newCommitSha);
-  console.log("Successfully autofixed changes.");
+  const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
+  console.log(codeForFiles)
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
