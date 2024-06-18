@@ -32,8 +32,34 @@ export async function createTreeForFixes(octokit, payload, mappedErrors) {
         console.error(error);
     }
     return newTreeSha;
-}
+} 
 
+/*
+    Fetches latest commit Sha of pull request branch
+    @param octokit: App that abstracts GitHub API requests
+    @param payload: The response object from GitHub webhook events
+    @returns The latest commit Sha as a string
+*/
+export async function fetchLatestCommitSha(octokit, payload) {
+    let latestCommitSha;
+    try {
+        const res = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+            owner: payload.repository.owner.login,
+            repo: payload.repository.name,
+            ref: `heads/${payload.workflow_run.pull_requests[0].head.ref}`,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+          });
+          latestCommitSha = res.sha;
+    } catch (error) {
+        if (error.response) { 
+            console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
+        }
+        console.error(error);
+    }
+    return latestCommitSha;
+}
 /*
     Creates a new commit for a newly created tree
     @param octokit: App that abstracts GitHub API requests
@@ -44,26 +70,6 @@ export async function createTreeForFixes(octokit, payload, mappedErrors) {
 */
 export async function createCommitForNewTree(octokit, payload, commitMsg, newTreeSha) {
 
-    const fetchLatestCommitSha = async (octokit, payload) => {
-        let latestCommitSha;
-        try {
-            const res = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
-                owner: payload.repository.owner.login,
-                repo: payload.repository.name,
-                ref: `heads/${payload.workflow_run.pull_requests[0].head.ref}`,
-                headers: {
-                  'X-GitHub-Api-Version': '2022-11-28'
-                }
-              });
-              latestCommitSha = res.sha;
-        } catch (error) {
-            if (error.response) { 
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
-            }
-            console.error(error);
-        }
-        return latestCommitSha;
-    }
     const parentCommitSha = await fetchLatestCommitSha(octokit, payload); //newly created commit needs to have previous commit as parent
     let newCommitSha;
     try {

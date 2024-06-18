@@ -1,19 +1,22 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import {fetchLatestCommitSha} from "./createTreeCommitRef.js"
 
 dotenv.config();
-/*
 
-  Calls OpenAI API for each file to generate the code fix given new code and errors and adds the property to each file in mappedErrors
+/*
+  Generates code fix for each error in mappedErrors then comments the fix as a suggestion on the pull request
   @param mappedErrors: An array of objects with properties file_path, line, error_desc
   @param codeForFiles: An object with keys of file_path and values of content
-  @returns Void
+  @param latestCommitSha: Sha of most recent commit of pull request to anchor suggestion to
+  @returns An array of objects with properties file_path, line, code_fix
 */
-export async function generateFixesForErrors(mappedErrors, codeForFiles ) {
+export async function generateFixesForErrors(mappedErrors, codeForFiles) {
   const key = process.env.OPENAI_API_KEY;
   const openai = new OpenAI({
       apiKey: key
   });
+  let res = [];
   try {
     for (const err of mappedErrors) {
       const completion = await openai.chat.completions.create({
@@ -23,13 +26,49 @@ export async function generateFixesForErrors(mappedErrors, codeForFiles ) {
         model: "gpt-4o",
       });
       const codeFix = completion.choices[0].message.content;
-      console.log(codeFix)
+      res.push({
+        "file_path": err.file_path,
+        "line": err.line,
+        "code_fix": codeFix
+      });
     };
-
   } catch (error) {
     if (error.response) { 
         console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
     }
     console.error(error);
+  }
+  return res;
+}
+
+/*
+  Comments code fixes as suggestions with explanations for each error
+  @param octokit: App that abstracts GitHub API requests
+  @param payload: The response object from GitHub webhook events
+  @param fixesForFiles: An array of objects with properties file_path, line, and code_fix
+  @returns Void
+*/
+export async function suggestFixesOnPr(octokit, payload, fixesForFiles) {
+  const latestCommitSha = await fetchLatestCommitSha(octokit, payload)
+  for (const fix of fixesForFiles) {
+    try {
+      await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/comments', {
+        owner: payload.repository.owner.login,
+        repo: payload.repository.name,
+        pull_number: payload.workflow_run.pull_requests[0].number,
+        body: fix.code_fix,
+        commit_id: latestCommitSha,
+        path: fix.file_path,
+        line: fix.line,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      });
+    } catch (error) {
+      if (error.response) { 
+          console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
+      }
+      console.error(error);
+    }
   }
 }

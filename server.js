@@ -4,7 +4,7 @@ import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
 import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFiles} from './helper.js';
-import {generateFixesForErrors} from "./openai.js";
+import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 
 dotenv.config();
@@ -36,7 +36,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
-  await generateFixesForErrors(mappedErrors, codeForFiles);
+  const fixesforFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
+  await suggestFixesOnPr(octokit, payload, fixesforFiles);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
