@@ -49,7 +49,8 @@ export async function generateFixesForErrors(mappedErrors, codeForFiles) {
   @returns Void
 */
 export async function suggestFixesOnPr(octokit, payload, fixesForFiles) {
-  const latestCommitSha = await fetchLatestCommitSha(octokit, payload)
+  const latestCommitSha = await fetchLatestCommitSha(octokit, payload);
+  console.log(`Latest commit Sha: ${latestCommitSha}`);
   for (const fix of fixesForFiles) {
     try {
       await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/comments', {
@@ -60,6 +61,7 @@ export async function suggestFixesOnPr(octokit, payload, fixesForFiles) {
         commit_id: latestCommitSha,
         path: fix.file_path,
         line: fix.line,
+        subject_type: 'line',
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
         }

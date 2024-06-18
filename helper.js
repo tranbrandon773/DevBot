@@ -101,7 +101,7 @@ export function mapErrorsToFiles(errors) {
         if (!match) continue; //only concerned with errors that occurred in the code aka associated with a file
         res.push({
             "file_path": match[1],
-            "line": match[2],
+            "line": parseInt(match[2]),
             "error_desc": match[3],
         });
     }
