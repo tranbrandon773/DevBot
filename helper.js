@@ -170,9 +170,8 @@ export async function fetchCodeForFiles(octokit, payload, mappedErrors) {
     let res = {};
     const headRef = payload.workflow_run.pull_requests[0].head.ref; // PR branch
     for (const error of mappedErrors) {
-        const path = error.file_path;
-        const content = await getFileContent(octokit, payload, path, headRef);
-        res[path] = content;
+        const content = await getFileContent(octokit, payload, error.file_path, headRef);
+        res[error.file_path] = content;
     }
     return res;
 }
