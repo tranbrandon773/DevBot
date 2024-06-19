@@ -51,7 +51,7 @@ export async function fetchLatestCommitSha(octokit, payload) {
               'X-GitHub-Api-Version': '2022-11-28'
             }
           });
-          latestCommitSha = res.sha;
+          latestCommitSha = res.data.sha;
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
