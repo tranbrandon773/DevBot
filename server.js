@@ -37,7 +37,6 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
   const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
-  console.log(JSON.stringify(fixesForFiles));
   await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 

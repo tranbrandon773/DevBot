@@ -20,6 +20,7 @@ export async function getWorkflowLogs(octokit, payload) {
             }
             });
         logsUrl = res.url;
+        console.log("Successfully fetched the workflow log download URL!");
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -48,6 +49,7 @@ export function runShell(link, dirName) {
             return;
         }
     });
+    console.log("Successfully downloaded workflow logs!");
 }
 
 /*
@@ -68,6 +70,7 @@ export function runShellPost(dirName) {
             return;
         }
     });
+    console.log("Successfully deleted workflow logs!");
 }
 
 /*
@@ -130,6 +133,7 @@ export async function fetchCodeForFiles(octokit, payload, mappedErrors) {
         const fetchContent = async (url) => {
             try {
                 const response = await axios.get(url);
+                console.log("Successfully fetched content of file from download URL!");
                 return response.data;
             } catch (error) {
                 console.error(`Failed to fetch content from ${url}. Error: ${error.message}`);
@@ -147,6 +151,7 @@ export async function fetchCodeForFiles(octokit, payload, mappedErrors) {
                 }
             });
             downloadUrl = res.data.download_url;
+            console.log("Successfully fetched download URL for file!");
         } catch (error) {
             if (error.response) { 
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);

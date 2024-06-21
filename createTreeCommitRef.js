@@ -25,6 +25,7 @@ export async function createTreeForFixes(octokit, payload, mappedErrors) {
             }
           });
         newTreeSha = res.sha;
+        console.log("Successfully created a new tree!");
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -52,6 +53,7 @@ export async function fetchLatestCommitSha(octokit, payload) {
             }
           });
           latestCommitSha = res.data.sha;
+          console.log("Successfully fetched the latest commit sha!");
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -86,6 +88,7 @@ export async function createCommitForNewTree(octokit, payload, commitMsg, newTre
             }
           });
           newCommitSha = res.sha;
+          console.log("Successfully created a commit for a new tree!");
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -114,6 +117,7 @@ export async function updateRefToPointToNewCommit(octokit, payload, newCommitSha
               'X-GitHub-Api-Version': '2022-11-28'
             }
           });
+          console.log("Successfully updated the ref to point to a new commit!");
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);

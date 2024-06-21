@@ -31,7 +31,8 @@ export async function generateFixesForErrors(mappedErrors, codeForFiles) {
         "line": err.line,
         "code_fix": codeFix
       });
-    };
+    }
+    console.log("Successfully generated fixes for errors!");
   } catch (error) {
     if (error.response) { 
         console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -50,7 +51,6 @@ export async function generateFixesForErrors(mappedErrors, codeForFiles) {
 */
 export async function suggestFixesOnPr(octokit, payload, fixesForFiles) {
   const latestCommitSha = await fetchLatestCommitSha(octokit, payload);
-  console.log(`Latest commit Sha: ${latestCommitSha}`);
   for (const fix of fixesForFiles) {
     try {
       await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/comments', {
@@ -65,6 +65,7 @@ export async function suggestFixesOnPr(octokit, payload, fixesForFiles) {
           'X-GitHub-Api-Version': '2022-11-28'
         }
       });
+      console.log("Successfully suggested fixes on PR!");
     } catch (error) {
       if (error.response) { 
           console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
