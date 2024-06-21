@@ -38,7 +38,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
   const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
   console.log(JSON.stringify(fixesForFiles));
-  await suggestFixesOnPr(octokit, payload, fixesforFiles);
+  await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
