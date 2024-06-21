@@ -3,7 +3,9 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, parseWorkflowLog, findFilesFromErrors, runShell, runShellPost, fetchOldAndNewCode} from './helper.js';
+import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFiles} from './helper.js';
+import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
+import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 
 dotenv.config();
 
@@ -30,11 +32,12 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 
   const logUrl = await getWorkflowLogs(octokit, payload);
   runShell(logUrl, "temp");
-  const errors = parseWorkflowLog(`./temp/0_build.txt`);
-  const mappedErrors = findFilesFromErrors(errors);
+  const errors = parseWorkflowLogForErrors(`./temp/0_build.txt`);
+  const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
-  await fetchOldAndNewCode(octokit, payload, mappedErrors);
-  console.log(mappedErrors);
+  const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
+  const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
+  await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete

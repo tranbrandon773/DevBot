@@ -20,6 +20,7 @@ export async function getWorkflowLogs(octokit, payload) {
             }
             });
         logsUrl = res.url;
+        console.log("Successfully fetched the workflow log download URL!");
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -27,16 +28,16 @@ export async function getWorkflowLogs(octokit, payload) {
         console.error(error);
     }
     return logsUrl;
-};
+}
 
 /*
-    Runs a shell script to download the workflow logs to the VM
-    @param link: Download URL for a given workflow log
-    @param newName: Name for the directory to download the workflow log to
+    Runs a shell script to download a workflow log
+    @param link: Download URL for a workflow log
+    @param dirName: Name for the directory to download the workflow log to
     @returns Void
 */
-export function runShell(link, newName) {
-    const shellScript = `./scripts/fetchLog.sh "${link}" ${newName}`;
+export function runShell(link, dirName) {
+    const shellScript = `./scripts/fetchLog.sh "${link}" ${dirName}`;
     execSync(shellScript, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);
@@ -48,15 +49,16 @@ export function runShell(link, newName) {
             return;
         }
     });
+    console.log("Successfully downloaded workflow logs!");
 }
 
 /*
-    Runs a shell script to delete the workflow log files and directory from the VM
-    @param newName: Name of the directory to delete
+    Runs a shell script to delete the workflow log files and directory
+    @param dirName: Name of the directory to delete
     @returns Void
 */
-export function runShellPost(newName) {
-    const shellScript = `./scripts/postrun.sh ${newName}`;
+export function runShellPost(dirName) {
+    const shellScript = `./scripts/postrun.sh ${dirName}`;
     execSync(shellScript, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);
@@ -68,59 +70,62 @@ export function runShellPost(newName) {
             return;
         }
     });
+    console.log("Successfully deleted workflow logs!");
 }
 
 /*
-    Parses a workflow log (.txt) and finds all errors
+    Parses a workflow log (.txt) and finds all errors that occur
     @param pathToLog: Path to workflow log as a .txt file 
     @returns An array of error string(s) found in the workflow log
 */
-export function parseWorkflowLog(pathToLog) {  
+export function parseWorkflowLogForErrors(pathToLog) {  
     let errors = [];
     const log = fs.readFileSync(pathToLog, 'utf8');
     const regex = /.error.*/ig;
     errors = log.match(regex);
-
     return errors;
 }
 
 /* 
-    Maps error(s) to their respective file(s)
+    Maps errors to their respective files and the lines they occurred on
     @param errors: An array of error strings from a workflow log
-    @returns An array of Maps with properties file_name and errors
+    @returns An array of objects with properties file_path, line, error_desc
 */
-export function findFilesFromErrors(errors) {
-    const myMap = new Map();
-    const regex = /([a-zA-Z0-9._-]+\.(java|js|cpp|py))/ig;
-    errors.forEach((errorStr) => {
-        const match = errorStr.match(regex);
-        if (match) {
-            if (!myMap.has(match[0])) {
-                myMap.set(match[0], []);
-            }
-            myMap.get(match[0]).push(errorStr);
-        }
-    });
-    return Array.from(myMap).map(([key, value]) => ({file_name: key, errors: value }));
+export function mapErrorsToFiles(errors) {
+    let res = [];
+    /*
+        /([a-zA-Z0-9._\/-]+) captures file path
+        (\d+) captures error line
+        (.*) captures error msg
+    */
+    const regex = /([a-zA-Z0-9._\/-]+):(\d+):\d+:(.*)/i;
+    for (const error of errors) {
+        const match = regex.exec(error)
+        if (!match) continue; //only concerned with errors that occurred in the code aka associated with a file
+        res.push({
+            "file_path": match[1],
+            "line": parseInt(match[2]),
+            "error_desc": match[3],
+        });
+    }
+    return res;
 }
 
 /*
-    Fetches old and new code for every file in mappedErrors and modifies it in place by adding them as properties
+    Fetches the code for every file in mappedErrors
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
-    @param mappedErrors: An array of Maps with properties file_name and errors
-    @returns Void
+    @param mappedErrors: An array of objects with properties file_path, line, error_desc
+    @returns An object with keys of file_path and values of content
 */
-export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
-
+export async function fetchCodeForFiles(octokit, payload, mappedErrors) {
     /*
-    Fetches the file content for a given repository and branch
+    Fetches the file content for a file of a given repository and branch
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
     @param path: String denoting path to the file from the repository
-    @param ref: String denoting the branch to retrieve the file content from
+    @param ref: Name of the branch to retrieve file content from
     @returns The content of the specified file
-
     */
     async function getFileContent(octokit, payload, path, ref) {
         let downloadUrl;
@@ -128,6 +133,7 @@ export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
         const fetchContent = async (url) => {
             try {
                 const response = await axios.get(url);
+                console.log("Successfully fetched content of file from download URL!");
                 return response.data;
             } catch (error) {
                 console.error(`Failed to fetch content from ${url}. Error: ${error.message}`);
@@ -145,6 +151,7 @@ export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
                 }
             });
             downloadUrl = res.data.download_url;
+            console.log("Successfully fetched download URL for file!");
         } catch (error) {
             if (error.response) { 
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -165,14 +172,11 @@ export async function fetchOldAndNewCode(octokit, payload, mappedErrors) {
             return null;
         }
     }
-
+    let res = {};
     const headRef = payload.workflow_run.pull_requests[0].head.ref; // PR branch
-    const baseRef = payload.workflow_run.pull_requests[0].base.ref; // main branch
-  
-    for (const file of mappedErrors) {
-      const oldCode = await getFileContent(octokit, payload, file.file_name, baseRef);
-      const newCode = await getFileContent(octokit, payload, file.file_name, headRef);
-      file.old_code = oldCode;
-      file.new_code = newCode;
-    };
+    for (const error of mappedErrors) {
+        const content = await getFileContent(octokit, payload, error.file_path, headRef);
+        res[error.file_path] = content;
+    }
+    return res;
 }
