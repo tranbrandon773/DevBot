@@ -61,7 +61,6 @@ export async function suggestFixesOnPr(octokit, payload, fixesForFiles) {
         commit_id: latestCommitSha,
         path: fix.file_path,
         line: fix.line,
-        subject_type: 'line',
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
         }
