@@ -6,7 +6,7 @@ import express from 'express';
 import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFilesErrored} from './helper.js';
 import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
-import {getFilesChangedFromPullRequest, fetchCodeForFilesChanged} from "./prbuddy.js";
+import {getFilesChangedFromPullRequest, fetchCodeForFilesChanged, generateSuggestionsForFiles} from "./prbuddy.js";
 
 // Initialize environment variables and octokit app
 dotenv.config();
@@ -38,7 +38,6 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFilesErrored(octokit, payload, mappedErrors);
   const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
-  // const fixesForFiles = await fixWithGroq(mappedErrors, codeForFiles);
   await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 
@@ -51,9 +50,9 @@ async function handleCommentPosted({octokit, payload}) {
       !payload.issue.pull_request ||
       payload.comment.body !== "/prbuddy") return;
   const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
-  console.log(filesChanged);
-  const codeForFiles = await fetchCodeForFilesChanged(octokit, filesChanged);
-  console.log(codeForFiles);
+  const codeForFilesChanged = await fetchCodeForFilesChanged(octokit, filesChanged);
+  const improvedCode = await generateSuggestionsForFiles(filesChanged, codeForFilesChanged);
+  console.log(improvedCode);
 }
 
 // Event listener for GitHub webhooks when comment posts

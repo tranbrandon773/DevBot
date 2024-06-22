@@ -2,9 +2,9 @@ import axios from 'axios';
 import OpenAI from "openai";
 /*
     1. Someone comments /prbuddy on a PR // done
-    2. Get info on PR // from the payload
-    3. Get files changed from PR // needs to implemented
-    4. Get content of each file // modify func from helper.js
+    2. Get info on PR // done
+    3. Get files changed from PR // done
+    4. Get content of each file // done
     5. Run inferencing to optimize code // tbd
     6. Commit changes/suggest it // tbd
     Webhook Documentation: https://docs.github.com/en/webhooks/webhook-events-and-payloads#issue_comment
@@ -202,7 +202,7 @@ export async function generateSuggestionsForFiles(filesChanged, codeForFilesChan
     try {
       for (const file of filesChanged) {
         const completion = await openai.chat.completions.create({
-          messages: [{ role: "system", content: "Blablabla"},
+          messages: [{ role: "system", content:"Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are a senior software engineer reviewing a pull request from a team member. You are given the code of a newly changed file and are tasked with reviewing the code and finding any improvements that can be made. Improvements include but are not limited to refactoring, efficiency, and documenting."},
                       {role: "user", content: `Name: ${file.filename} Code: ${codeForFilesChanged[file.filename]}`}
           ],
           model: "gpt-4o",
