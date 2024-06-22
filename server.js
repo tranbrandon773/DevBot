@@ -52,7 +52,7 @@ async function handleCommentPosted({octokit, payload}) {
       payload.comment.body !== "/prbuddy") return;
   const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
   console.log(filesChanged);
-  const codeForFiles = await fetchCodeForFilesChanged(filesChanged);
+  const codeForFiles = await fetchCodeForFilesChanged(octokit, filesChanged);
   console.log(codeForFiles);
 }
 

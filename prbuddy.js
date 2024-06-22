@@ -128,20 +128,17 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
 /*
     Fetches the code for every file in filesChanged
     @param octokit: App that abstracts GitHub API requests
-    @param payload: The response object from GitHub webhook events
     @param filesChanged: An array of objects with (important) properties filename, status, contents_url
     @returns An object with keys of file_path and values of content
 */
-export async function fetchCodeForFilesChanged(octokit, payload, filesChanged) {
+export async function fetchCodeForFilesChanged(octokit, filesChanged) {
     /*
     Fetches the file content for a file of a given repository and branch
     @param octokit: App that abstracts GitHub API requests
-    @param payload: The response object from GitHub webhook events
-    @param path: String denoting path to the file from the repository
-    @param ref: Name of the branch to retrieve file content from
+    @param contentsUrl: URL to contents of the file
     @returns The content of the specified file
     */
-    async function getFileContent(octokit, payload, contentsUrl) {
+    async function getFileContent(octokit, contentsUrl) {
         let downloadUrl;
         // Helper function to retrieve content using axios
         const fetchContent = async (url) => {
@@ -156,10 +153,6 @@ export async function fetchCodeForFilesChanged(octokit, payload, filesChanged) {
         }
         try {
             const res = await octokit.request(`GET ${contentsUrl}`, {
-                owner: payload.repository.owner.login,
-                repo: payload.repository.name,
-                path: path,
-                ref: ref,
                 headers: {
                     'X-GitHub-Api-Version': '2022-11-28'
                 }
@@ -188,7 +181,7 @@ export async function fetchCodeForFilesChanged(octokit, payload, filesChanged) {
     }
     let res = {};
     for (const file of filesChanged) {
-        const content = await getFileContent(octokit, payload, file.contents_url);
+        const content = await getFileContent(octokit, file.contents_url);
         res[error.file_path] = content;
     }
     return res;
