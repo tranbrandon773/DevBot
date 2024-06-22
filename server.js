@@ -51,7 +51,7 @@ async function handleCommentPosted({octokit, payload}) {
       payload.comment.body !== "/prbuddy") return;
   console.log(JSON.stringify(payload))
   
-  const temp = getFilesChangedFromPullRequest(octokit, payload);
+  const temp = await getFilesChangedFromPullRequest(octokit, payload);
   console.log(temp);
 }
 
