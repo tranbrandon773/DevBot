@@ -126,21 +126,70 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
 }
 
 /*
-    Fetches code for each file changed
-    @param filesChanged: An array of objects with (important) properties filename, status, raw_url
-    @returns An object with keys of file_name and values of content
+    Fetches the code for every file in filesChanged
+    @param octokit: App that abstracts GitHub API requests
+    @param payload: The response object from GitHub webhook events
+    @param filesChanged: An array of objects with (important) properties filename, status, contents_url
+    @returns An object with keys of file_path and values of content
 */
-export async function fetchFileContent(filesChanged) {
+export async function fetchCodeForFiles(octokit, payload, filesChanged) {
+    /*
+    Fetches the file content for a file of a given repository and branch
+    @param octokit: App that abstracts GitHub API requests
+    @param payload: The response object from GitHub webhook events
+    @param path: String denoting path to the file from the repository
+    @param ref: Name of the branch to retrieve file content from
+    @returns The content of the specified file
+    */
+    async function getFileContent(octokit, payload, contentsUrl) {
+        let downloadUrl;
+        // Helper function to retrieve content using axios
+        const fetchContent = async (url) => {
+            try {
+                const response = await axios.get(url);
+                console.log("Successfully fetched content of file from download URL!");
+                return response.data;
+            } catch (error) {
+                console.error(`Failed to fetch content from ${url}. Error: ${error.message}`);
+                throw error;
+            }
+        }
+        try {
+            const res = await octokit.request(`GET ${contentsUrl}`, {
+                owner: payload.repository.owner.login,
+                repo: payload.repository.name,
+                path: path,
+                ref: ref,
+                headers: {
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            });
+            downloadUrl = res.data.download_url;
+            console.log("Successfully fetched download URL for file!");
+        } catch (error) {
+            if (error.response) { 
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
+            }
+            console.error(error);
+            return null;
+        }
+        
+        if (downloadUrl) {
+            try {
+                const content = await fetchContent(downloadUrl);
+                return content;
+            } catch (error) {
+                console.error('Error fetching file content:', error);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
     let res = {};
     for (const file of filesChanged) {
-        try {
-            const response = await axios.get(file.raw_url);
-            console.log("Successfully fetched content of file from download URL!");
-            res[file.filename] = response.data;
-        } catch (error) {
-            console.error(`Failed to fetch content from ${file.contents_url}. Error: ${error.message}`);
-            throw error;
-        }
+        const content = await getFileContent(octokit, payload, file.contents_url);
+        res[error.file_path] = content;
     }
     return res;
 }
