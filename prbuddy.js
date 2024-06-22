@@ -102,7 +102,7 @@ import OpenAI from "openai";
     Gets files changed from a pull request
     @param octokit: App that abstracts GitHub API requests
     @param payload: The response object from GitHub webhook events
-    @returns An array of objects with (important) properties filename, status, raw_url
+    @returns An array of objects with (important) properties filename, status, contents_url
 */
 export async function getFilesChangedFromPullRequest(octokit, payload) {
     let filesChanged;
@@ -138,7 +138,7 @@ export async function fetchFileContent(filesChanged) {
             console.log("Successfully fetched content of file from download URL!");
             res[file.filename] = response.data;
         } catch (error) {
-            console.error(`Failed to fetch content from ${file.raw_url}. Error: ${error.message}`);
+            console.error(`Failed to fetch content from ${file.contents_url}. Error: ${error.message}`);
             throw error;
         }
     }
