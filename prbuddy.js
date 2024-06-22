@@ -209,7 +209,7 @@ export async function generateSuggestionsForFiles(filesChanged, codeForFilesChan
         });
         const codeFix = completion.choices[0].message.content;
         res.push({
-          "file_name": err.file_path,
+          "file_name": file.filename,
           "code_suggestion": codeFix
         });
       }
