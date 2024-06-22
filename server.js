@@ -3,11 +3,10 @@ import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import express from 'express';
-import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFiles} from './helper.js';
+import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFilesErrored} from './helper.js';
 import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
-import {getFilesChangedFromPullRequest, fetchFileContent} from "./prbuddy.js";
-import {fixWithGroq} from "./groq.js";
+import {getFilesChangedFromPullRequest, fetchCodeForFilesChanged} from "./prbuddy.js";
 
 // Initialize environment variables and octokit app
 dotenv.config();
@@ -37,7 +36,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const errors = parseWorkflowLogForErrors(`./temp/0_build.txt`);
   const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
-  const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
+  const codeForFiles = await fetchCodeForFilesErrored(octokit, payload, mappedErrors);
   const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
   // const fixesForFiles = await fixWithGroq(mappedErrors, codeForFiles);
   await suggestFixesOnPr(octokit, payload, fixesForFiles);
@@ -53,7 +52,7 @@ async function handleCommentPosted({octokit, payload}) {
       payload.comment.body !== "/prbuddy") return;
   const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
   console.log(filesChanged);
-  const codeForFiles = await fetchFileContent(filesChanged);
+  const codeForFiles = await fetchCodeForFilesChanged(filesChanged);
   console.log(codeForFiles);
 }
 

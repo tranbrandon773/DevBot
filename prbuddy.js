@@ -132,7 +132,7 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
     @param filesChanged: An array of objects with (important) properties filename, status, contents_url
     @returns An object with keys of file_path and values of content
 */
-export async function fetchCodeForFiles(octokit, payload, filesChanged) {
+export async function fetchCodeForFilesChanged(octokit, payload, filesChanged) {
     /*
     Fetches the file content for a file of a given repository and branch
     @param octokit: App that abstracts GitHub API requests
