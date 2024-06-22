@@ -38,8 +38,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
-  // const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
-  const fixesForFiles = await fixWithGroq(mappedErrors, codeForFiles);
+  const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
+  // const fixesForFiles = await fixWithGroq(mappedErrors, codeForFiles);
   await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 
