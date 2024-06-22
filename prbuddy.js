@@ -1,3 +1,5 @@
+import axios from 'axios';
+import OpenAI from "openai";
 /*
     1. Someone comments /prbuddy on a PR // done
     2. Get info on PR // from the payload
@@ -79,37 +81,28 @@
       "site_admin": false
     }
 */
-
 /*
 [
   {
-    "sha": "bbcd538c8e72b8c175046e27cc8f907076331401",
-    "filename": "file1.txt",
-    "status": "added",
-    "additions": 103,
-    "deletions": 21,
-    "changes": 124,
-    "blob_url": "https://github.com/octocat/Hello-World/blob/6dcb09b5b57875f334f61aebed695e2e4193db5e/file1.txt",
-    "raw_url": "https://github.com/octocat/Hello-World/raw/6dcb09b5b57875f334f61aebed695e2e4193db5e/file1.txt",
-    "contents_url": "https://api.github.com/repos/octocat/Hello-World/contents/file1.txt?ref=6dcb09b5b57875f334f61aebed695e2e4193db5e",
-    "patch": "@@ -132,7 +132,7 @@ module Test @@ -1000,7 +1000,7 @@ module Test"
-  },
-   {
-    "sha": "bbcd538c8e72b8c175046e27cc8f907076331401",
-    "filename": "file2.txt",
-    "status": "added",
-    "additions": 103,
-    "deletions": 21,
-    "changes": 124,
-    "blob_url": "https://github.com/octocat/Hello-World/blob/6dcb09b5b57875f334f61aebed695e2e4193db5e/file1.txt",
-    "raw_url": "https://github.com/octocat/Hello-World/raw/6dcb09b5b57875f334f61aebed695e2e4193db5e/file1.txt",
-    "contents_url": "https://api.github.com/repos/octocat/Hello-World/contents/file1.txt?ref=6dcb09b5b57875f334f61aebed695e2e4193db5e",
-    "patch": "@@ -132,7 +132,7 @@ module Test @@ -1000,7 +1000,7 @@ module Test"
-  },
-
+    "sha": "a72d650bda0dd88507fd9d8fb4130cf7baba1ae1",
+    "filename": "main.py",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 1,
+    "changes": 4,
+    "blob_url": "https://github.com/tranbrandon773/test/blob/275252f586e7d34767da331f52d78611b0d58153/main.py",
+    "raw_url": "https://github.com/tranbrandon773/test/raw/275252f586e7d34767da331f52d78611b0d58153/main.py",
+    "contents_url": "https://api.github.com/repos/tranbrandon773/test/contents/main.py?ref=275252f586e7d34767da331f52d78611b0d58153",
+    "patch": "@@ -1,3 +1,5 @@\n+import numpy\n+\n '''\n Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n You may assume that each input would have exactly one solution, and you may not use the same element twice.\n@@ -36,4 +38,4 @@ def twoSum(nums, target):\n             if i == j: \n                 continue\n             if nums[i] + nums[j] == target: \n-                return i, j\n\\ No newline at end of file\n+                return i, j"
+  }
 ]
 */
-//all files, not just the files changed?
+
+/*
+    Gets files changed from a pull request
+    @param octokit: App that abstracts GitHub API requests
+    @param payload: The response object from GitHub webhook events
+*/
 export async function getFilesChangedFromPullRequest(octokit, payload) {
     let filesChanged;
     try {
@@ -129,4 +122,60 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
         console.error(error);
     }
     return filesChanged
+}
+
+/*
+    Fetches code for each file changed
+    @param filesChanged: An array of objects with properties sha, filename, status, raw_url
+    @returns An object with keys of file_name and values of content
+*/
+export async function fetchFileContent(filesChanged) {
+    let res = {};
+    for (const file of filesChanged) {
+        try {
+            const response = await axios.get(downloadUrl);
+            console.log("Successfully fetched content of file from download URL!");
+            res[file.filename] = response.data;
+        } catch (error) {
+            console.error(`Failed to fetch content from ${downloadUrl}. Error: ${error.message}`);
+            throw error;
+        }
+    }
+    return res;
+}
+
+/*
+    Generate suggestions for each file changed
+    @param filesChanged: An array of objects with properties sha, filename, status, raw_url
+    @param codeForFilesChanged: An object with keys of file_name and values of content
+    @returns An array of objects with properties file_name and code_suggestion
+*/
+export async function generateSuggestionsForFiles(filesChanged, codeForFilesChanged) {
+    const key = process.env.OPENAI_API_KEY;
+    const openai = new OpenAI({
+        apiKey: key
+    });
+    let res = [];
+    try {
+      for (const file of filesChanged) {
+        const completion = await openai.chat.completions.create({
+          messages: [{ role: "system", content: "Blablabla"},
+                      {role: "user", content: `Name: ${file.filename} Code: ${codeForFilesChanged[file.filename]}`}
+          ],
+          model: "gpt-4o",
+        });
+        const codeFix = completion.choices[0].message.content;
+        res.push({
+          "file_name": err.file_path,
+          "code_suggestion": codeFix
+        });
+      }
+      console.log("Successfully generated fixes for errors!");
+    } catch (error) {
+      if (error.response) { 
+          console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
+      }
+      console.error(error);
+    }
+    return res;
 }
