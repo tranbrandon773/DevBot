@@ -48,7 +48,7 @@ async function handleCommentPosted({octokit, payload}) {
   if (payload.action !== "created" ||
       !payload.issue.pull_request ||
       payload.comment.body !== "/prbuddy") return;
-  console.log("Triggered pr buddy!");
+  console.log(JSON.stringify(payload))
 }
 
 // Event listener for GitHub webhooks when comment posts
