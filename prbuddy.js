@@ -182,7 +182,7 @@ export async function fetchCodeForFilesChanged(octokit, filesChanged) {
     let res = {};
     for (const file of filesChanged) {
         const content = await getFileContent(octokit, file.contents_url);
-        res[error.file_path] = content;
+        res[file.filename] = content;
     }
     return res;
 }
