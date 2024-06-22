@@ -42,7 +42,7 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
-// app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
+app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 
 // Handles event from comment posted event listener
 async function handleCommentPosted({octokit, payload}) {
