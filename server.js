@@ -41,14 +41,14 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
-app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
+// app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 
 // Handles event from comment posted event listener
 async function handleCommentPosted({octokit, payload}) {
   if (payload.action !== "created" ||
       !payload.issue.pull_request ||
-      payload.comment.body !== "/prbot") return;
-  console.log("Triggered pr bot!");
+      payload.comment.body !== "/prbuddy") return;
+  console.log("Triggered pr buddy!");
 }
 
 // Event listener for GitHub webhooks when comment posts
