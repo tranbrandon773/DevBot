@@ -138,7 +138,7 @@ export async function fetchFileContent(filesChanged) {
             console.log("Successfully fetched content of file from download URL!");
             res[file.filename] = response.data;
         } catch (error) {
-            console.error(`Failed to fetch content from ${downloadUrl}. Error: ${error.message}`);
+            console.error(`Failed to fetch content from ${file.raw_url}. Error: ${error.message}`);
             throw error;
         }
     }
