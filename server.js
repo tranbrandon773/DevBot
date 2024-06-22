@@ -7,6 +7,7 @@ import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapE
 import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 import {getFilesChangedFromPullRequest, fetchFileContent} from "./prbuddy.js";
+import {fixWithGroq} from "./groq.js";
 
 // Initialize environment variables and octokit app
 dotenv.config();
@@ -37,7 +38,8 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   const mappedErrors = mapErrorsToFiles(errors);
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
-  const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
+  // const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
+  const fixesForFiles = fixWithGroq(mappedErrors, codeForFiles);
   await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 
