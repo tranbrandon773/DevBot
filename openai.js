@@ -20,8 +20,8 @@ export async function generateFixesForErrors(mappedErrors, codeForFiles) {
   try {
     for (const err of mappedErrors) {
       const completion = await openai.chat.completions.create({
-        messages: [{ role: "system", content: "Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are a senior software engineer reviewing a pull request from a team member. You are given the code of a file along with the error that occurred on a specific line. Please fix only the error on the given line. You should prioritize removing code rather than commenting it out. Output fixed code for that line in a GitHub suggestion markdown, you should only include the line the error occured on rather than the rest of the code. You should briefly explain your fix in a conversational tone for your team members to understand and learn from. Your output should look like '```suggestion\\n{your code fix}\\n```\\n{your explanation for the fix}'."},
-                    {role: "user", content: `Code: ${codeForFiles[err.file_path]} Error: ${err.error_desc} Error Line: ${err.line}`}
+        messages: [{ role: "system", content: "Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are a senior software engineer reviewing a pull request from a team member. You are given the code of a file along with the error that occurred on a specific line. Please fix only the error on the given line. You should prioritize removing code rather than commenting it out. Output fixed code for that line in a GitHub suggestion markdown, including only the line where the error occurred rather than the rest of the code. Briefly explain your fix in a conversational tone for your team members to understand and learn from. Your output should look like: ```suggestion\\n{your code fix}\\n```\\n{your} {your explanation for the fix}"},
+                    {role: "user", content: `Here is an example, Code: ${codeForFiles[err.file_path]} Error: ${err.error_desc} Error Line: ${err.line}`}
         ],
         model: "gpt-4o",
       });
