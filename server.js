@@ -39,8 +39,9 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   runShellPost("temp");
   const codeForFiles = await fetchCodeForFiles(octokit, payload, mappedErrors);
   // const fixesForFiles = await generateFixesForErrors(mappedErrors, codeForFiles);
-  const fixesForFiles = fixWithGroq(mappedErrors, codeForFiles);
-  await suggestFixesOnPr(octokit, payload, fixesForFiles);
+  const fixesForFiles = await fixWithGroq(mappedErrors, codeForFiles);
+  console.log(fixesForFiles);
+  // await suggestFixesOnPr(octokit, payload, fixesForFiles);
 };
 
 // Event listener for GitHub webhooks when workflow runs complete
