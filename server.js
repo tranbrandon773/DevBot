@@ -49,7 +49,7 @@ app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 async function handleCommentPosted({octokit, payload}) {
   if (payload.action !== "created" ||
       !payload.issue.pull_request ||
-      payload.comment.body !== "/prbuddy" ||
+      payload.comment.body !== "/prbuddy" &&
       payload.comment.body !== "/testbot") return;
   const prBuddy = async () => {
     console.log("PR Buddy triggered!")
