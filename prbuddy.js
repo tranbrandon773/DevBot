@@ -222,3 +222,31 @@ export async function generateSuggestionsForFiles(filesChanged, codeForFilesChan
     }
     return res;
 }
+
+/* 
+    Comments improved code and feedback suggestions on PR
+    @param octokit: App that abstracts GitHub API requests
+    @param payload: The response object from GitHub webhook events
+    @param improvedCode: An array of objects with properties file_name and code_suggestion
+
+*/
+export async function commentOnPr(octokit, payload, improvedCode) {
+    for (const file of improvedCode) {
+        try {
+            await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+              owner: payload.repository.owner.login,
+              repo: payload.repository.name,
+              issue_number: payload.issue.number,
+              body: file.code_suggestion,
+              headers: {
+                "x-github-api-version": "2022-11-28",
+              },
+            });
+          } catch (error) {
+            if (error.response) {
+              console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+            }
+            console.error(error)
+          }
+    }
+}

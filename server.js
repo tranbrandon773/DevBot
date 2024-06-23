@@ -6,7 +6,7 @@ import express from 'express';
 import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapErrorsToFiles, fetchCodeForFilesErrored} from './helper.js';
 import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
-import {getFilesChangedFromPullRequest, fetchCodeForFilesChanged, generateSuggestionsForFiles} from "./prbuddy.js";
+import {getFilesChangedFromPullRequest, fetchCodeForFilesChanged, generateSuggestionsForFiles, commentOnPr} from "./prbuddy.js";
 
 // Initialize environment variables and octokit app
 dotenv.config();
@@ -52,7 +52,7 @@ async function handleCommentPosted({octokit, payload}) {
   const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
   const codeForFilesChanged = await fetchCodeForFilesChanged(octokit, filesChanged);
   const improvedCode = await generateSuggestionsForFiles(filesChanged, codeForFilesChanged);
-  console.log(improvedCode);
+  await commentOnPr(octokit, payload, improvedCode);
 }
 
 // Event listener for GitHub webhooks when comment posts
