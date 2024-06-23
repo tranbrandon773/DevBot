@@ -1,3 +1,5 @@
+import OpenAI from "openai";
+
 /*
     Generate tests for each file changed
     @param filesChanged: An array of objects with properties sha, filename, status, raw_url
