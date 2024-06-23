@@ -20,6 +20,7 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
             });
         filesChanged = res.data;
         console.log("Successfully fetched files changed from PR!")
+        console.log(res);
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
@@ -73,7 +74,7 @@ export async function fetchCodeForFilesChanged(octokit, filesChanged) {
         
         if (downloadUrl) {
             try {
-                console.log("AAA")
+                console.log("BBB")
                 console.log(downloadUrl);
                 const content = await fetchContent(downloadUrl);
                 return content;
