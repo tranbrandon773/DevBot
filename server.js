@@ -27,6 +27,7 @@ const app = new App({
 
 // Handles events from workflow run completion event listener
 async function handleWorkflowRunCompleted({octokit, payload}) {
+  console.log("Build Bot triggered!")
   if (payload.action !== "completed" || 
       payload.workflow_run.conclusion !== "failure" || 
       payload.workflow_run.pull_requests.length === 0) return;
@@ -46,6 +47,7 @@ app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 
 // Handles event from comment posted event listener
 async function handleCommentPosted({octokit, payload}) {
+  console.log("PR Buddy triggered!")
   if (payload.action !== "created" ||
       !payload.issue.pull_request ||
       payload.comment.body !== "/prbuddy") return;
