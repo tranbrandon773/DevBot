@@ -118,7 +118,7 @@ export function mapErrorsToFiles(errors) {
     @param mappedErrors: An array of objects with properties file_path, line, error_desc
     @returns An object with keys of file_path and values of content
 */
-export async function fetchCodeForFiles(octokit, payload, mappedErrors) {
+export async function fetchCodeForFilesErrored(octokit, payload, mappedErrors) {
     /*
     Fetches the file content for a file of a given repository and branch
     @param octokit: App that abstracts GitHub API requests
