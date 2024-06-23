@@ -202,7 +202,7 @@ export async function generateSuggestionsForFiles(filesChanged, codeForFilesChan
     try {
       for (const file of filesChanged) {
         const completion = await openai.chat.completions.create({
-          messages: [{ role: "system", content:"Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are a senior software engineer reviewing a pull request from a team member. You are given the code of a newly changed file and are tasked with reviewing the code and finding any improvements that can be made. Improvements include but are not limited to refactoring, efficiency, and documenting."},
+          messages: [{ role: "system", content:"Attached is an instruction that describes a task. Write a response that appropriately completes the request. You are a senior software engineer reviewing a pull request from a team member. You are given the code of a newly changed file and are tasked with reviewing the code and finding any improvements that can be made. Improvements include but are not limited to refactoring, efficiency, and documenting. I want you to make improvements to the code itself and discuss your changes/feedback. Your output should look like: ```\\n{your code improvements}\\n```\\n{your feedback}"},
                       {role: "user", content: `Name: ${file.filename} Code: ${codeForFilesChanged[file.filename]}`}
           ],
           model: "gpt-4o",
