@@ -73,6 +73,8 @@ export async function fetchCodeForFilesChanged(octokit, filesChanged) {
         
         if (downloadUrl) {
             try {
+                console.log("AAA")
+                console.log(downloadUrl);
                 const content = await fetchContent(downloadUrl);
                 return content;
             } catch (error) {
