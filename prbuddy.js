@@ -19,6 +19,7 @@ export async function getFilesChangedFromPullRequest(octokit, payload) {
             }
             });
         filesChanged = res.data;
+        console.log("Successfully fetched files changed from PR!")
     } catch (error) {
         if (error.response) { 
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
@@ -145,6 +146,7 @@ export async function commentOnPr(octokit, payload, improvedCode) {
                 "x-github-api-version": "2022-11-28",
               },
             });
+            console.log("Successfully commented on PR!")
           } catch (error) {
             if (error.response) {
               console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
