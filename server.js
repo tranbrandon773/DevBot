@@ -7,6 +7,7 @@ import {getWorkflowLogs, runShell, runShellPost, parseWorkflowLogForErrors, mapE
 import {generateFixesForErrors, suggestFixesOnPr} from "./openai.js";
 import {createTreeForFixes, createCommitForNewTree, updateRefToPointToNewCommit} from "./createTreeCommitRef.js";
 import {getFilesChangedFromPullRequest, fetchCodeForFilesChanged, generateSuggestionsForFiles, commentOnPr} from "./prbuddy.js";
+import {generateTestsForFiles} from "./testCov.js";
 
 // Initialize environment variables and octokit app
 dotenv.config();
@@ -31,7 +32,6 @@ async function handleWorkflowRunCompleted({octokit, payload}) {
   if (payload.action !== "completed" || 
       payload.workflow_run.conclusion !== "failure" || 
       payload.workflow_run.pull_requests.length === 0) return;
-
   const logUrl = await getWorkflowLogs(octokit, payload);
   runShell(logUrl, "temp");
   const errors = parseWorkflowLogForErrors(`./temp/0_build.txt`);
@@ -47,14 +47,26 @@ app.webhooks.on("workflow_run.completed", handleWorkflowRunCompleted);
 
 // Handles event from comment posted event listener
 async function handleCommentPosted({octokit, payload}) {
-  console.log("PR Buddy triggered!")
   if (payload.action !== "created" ||
       !payload.issue.pull_request ||
-      payload.comment.body !== "/prbuddy") return;
-  const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
-  const codeForFilesChanged = await fetchCodeForFilesChanged(octokit, filesChanged);
-  const improvedCode = await generateSuggestionsForFiles(filesChanged, codeForFilesChanged);
-  await commentOnPr(octokit, payload, improvedCode);
+      payload.comment.body !== "/prbuddy" &&
+      payload.comment.body !== "/testbot") return;
+  const prBuddy = async () => {
+    console.log("PR Buddy triggered!")
+    const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
+    const codeForFilesChanged = await fetchCodeForFilesChanged(octokit, filesChanged);
+    const improvedCode = await generateSuggestionsForFiles(filesChanged, codeForFilesChanged);
+    await commentOnPr(octokit, payload, improvedCode);
+  }
+  const testBot = async () => {
+    console.log("Test Bot triggered!");
+    const filesChanged = await getFilesChangedFromPullRequest(octokit, payload);
+    const codeForFilesChanged = await fetchCodeForFilesChanged(octokit, filesChanged);
+    const codeTests = await generateTestsForFiles(filesChanged, codeForFilesChanged);
+    await commentOnPr(octokit, payload, codeTests);
+  }
+  if (payload.comment.body === "/prbuddy") prBuddy();
+  if (payload.comment.body === "/testbot") testBot();
 }
 
 // Event listener for GitHub webhooks when comment posts
